@@ -46,6 +46,15 @@ This software controls a **real machine with spinning blades**.
 > The **Calendar** and **Freshness** map read your *real* mow history from the
 > Lymow cloud, so the first load takes a short moment, then it's cached.
 
+## Found a bug or a security issue?
+
+- **🐞 Bug or feature request:** open an [issue](../../issues/new/choose) — the
+  form walks you through it. *(Please don't paste your account login or map/GPS
+  data.)*
+- **🔒 Security vulnerability:** report it **privately** via
+  [Report a vulnerability](../../security/advisories/new) — never in a public
+  issue. See our [Security Policy](SECURITY.md) for details.
+
 ## Acknowledgements
 
 - **[d3dfantasy99/Lymow-HA](https://github.com/d3dfantasy99/Lymow-HA)** — the Home
