@@ -1,0 +1,59 @@
+name: 🐞 Bug report
+description: Something in the Toolkit isn't working right.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the Lymow Toolkit!
+
+        ⚠️ **Privacy:** do **not** paste your Lymow account login or tokens, and do
+        **not** attach your map / coverage files — they contain your property's GPS
+        location. Redact any address, coordinates, or account details from screenshots.
+  - type: input
+    id: version
+    attributes:
+      label: Toolkit version
+      placeholder: e.g. v1.34.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows (.msi)
+        - Windows (.exe)
+        - Windows (portable .zip)
+        - macOS
+        - Linux / Ubuntu
+        - Docker
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What went wrong, and what did you expect to happen instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots (optional)
+      description: Redact any account info, IP addresses, or map/GPS data first.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I've removed my account credentials and any map/GPS/location data from this report.
+          required: true

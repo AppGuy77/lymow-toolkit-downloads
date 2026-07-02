@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Community help & questions (Facebook group)
+    url: https://www.facebook.com/share/g/1Jc7YfPStf/
+    about: For setup help and general questions, please use the community group first.
+  - name: 🔒 Report a security vulnerability (private)
+    url: https://github.com/AppGuy77/lymow-toolkit-downloads/security/advisories/new
+    about: Please report security issues privately — never in a public issue.
