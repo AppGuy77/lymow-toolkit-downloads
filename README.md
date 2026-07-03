@@ -10,13 +10,15 @@ guards — features the official app doesn't offer.
 
 ## ⬇️ Download
 
+- **[Download the latest release](https://github.com/AppGuy77/lymow-toolkit-downloads/releases/latest)**
+- **Source code:** <https://github.com/AppGuy77/lymow-toolkit>
+
 Grab the latest installer from the **[Releases page](../../releases/latest)**:
 
 | Platform | File | Notes |
 |---|---|---|
 | **Windows** (recommended) | `LymowToolkitSetup-vX.Y.Z.msi` | Standard installer. Windows Defender leaves it alone. |
 | Windows (alternative) | `LymowToolkitSetup-vX.Y.Z.exe` | Unsigned — may trigger a Windows Defender virus warning **because it's an unsigned file**. The `.msi` avoids that. |
-| Windows (portable) | `lymow-windows-vX.Y.Z.zip` | No installer; unzip and run. |
 | **macOS** | `lymow-mac-vX.Y.Z.tar.gz` | |
 | **Linux / Ubuntu** | `lymow-ubuntu-vX.Y.Z.tar.gz` | |
 | **Docker** | `lymow-docker-vX.Y.Z.tar.gz` | |
