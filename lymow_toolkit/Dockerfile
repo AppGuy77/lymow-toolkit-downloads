@@ -6,11 +6,21 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
 FROM python:3.12-slim
 
-ARG LYMOW_VERSION=1.36.0
+ARG LYMOW_VERSION=1.37.0
 WORKDIR /app
 
 # app payload (official release bundle) + python deps + camera/tunnel helpers, one cached layer
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg curl ca-certificates \
+# Google-sign-in browser = the Playwright chromium build (most compatible headless build; the Debian
+# distro build silently crashed on some hosts). armv7 has no Playwright build -> Debian chromium.
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg fonts-liberation dbus curl ca-certificates \
+    && dbus-uuidgen --ensure=/etc/machine-id \
+    && arch="$(dpkg --print-architecture)" \
+    && if [ "$arch" = "amd64" ] || [ "$arch" = "arm64" ]; then \
+         pip install --no-cache-dir playwright \
+         && (playwright install --with-deps --no-shell chromium \
+             || playwright install --with-deps chromium); \
+       else apt-get install -y --no-install-recommends chromium; fi \
     && curl -fsSL --retry 3 -o /tmp/lymow.tar.gz \
        "https://github.com/AppGuy77/lymow-toolkit-downloads/releases/download/v${LYMOW_VERSION}/lymow-docker-v${LYMOW_VERSION}.tar.gz" \
     && tar xzf /tmp/lymow.tar.gz -C /tmp \

@@ -1,7 +1,7 @@
 # Lymow Toolkit — Home Assistant add-on manifest. The version placeholder is stamped by
 # tools/make_ha_addon.sh from the repo VERSION file, so the add-on tracks the toolkit release.
 name: Lymow Toolkit
-version: "1.36.0"
+version: "1.37.0"
 slug: lymow_toolkit
 description: Local companion dashboard for the Lymow One robotic mower
 url: https://github.com/AppGuy77/lymow-toolkit-downloads
@@ -12,6 +12,10 @@ arch:
 init: false
 startup: application
 boot: auto
+# host_network: the add-on sits directly on the Home Assistant host's LAN, so http://<HA-host-ip>:8787
+# is reachable from phones/PCs out of the box — the reliable setup on a Pi/NUC, where the bridge network
+# can fail to forward published ports to the LAN (the "works on localhost, refused from the LAN" symptom).
+host_network: true
 ports:
   8787/tcp: 8787
 ports_description:
