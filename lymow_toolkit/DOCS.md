@@ -46,3 +46,10 @@ survive every update and rebuild.
 ## Support
 
 Questions and feedback: the [Lymow Toolkit Facebook group](https://www.facebook.com/share/g/1Jc7YfPStf/).
+
+## ☕ Donations
+
+If the Toolkit is useful to you, you can support its development at
+**<https://ko-fi.com/lymow_toolkit>**.
+
+It is free and always will be — donations are appreciated, never expected.

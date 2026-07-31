@@ -7,3 +7,6 @@ auto-recovery, mow history, and remote control.
 Sign in with your Lymow account after starting the add-on: click **Open Web UI**.
 
 Full instructions are on the **Documentation** tab.
+
+☕ **Donations accepted:** https://ko-fi.com/lymow_toolkit — the Toolkit is free and always will be;
+donations are appreciated, never expected.
