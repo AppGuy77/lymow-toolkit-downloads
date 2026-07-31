@@ -8,6 +8,13 @@ guards — features the official app doesn't offer.
 > **Independent community project — not affiliated with, endorsed by, or
 > supported by Lymow.** Use at your own risk.
 
+## ☕ Donations
+
+If the Toolkit is useful to you, you can support its development at
+**<https://ko-fi.com/lymow_toolkit>**.
+
+It is free and always will be — donations are appreciated, never expected.
+
 ## ⬇️ Download
 
 - **[Download the latest release](https://github.com/AppGuy77/lymow-toolkit-downloads/releases/latest)**
