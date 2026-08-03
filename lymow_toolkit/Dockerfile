@@ -6,7 +6,7 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
 FROM python:3.12-slim
 
-ARG LYMOW_VERSION=1.43.3
+ARG LYMOW_VERSION=1.44.0
 WORKDIR /app
 
 # app payload (official release bundle) + python deps + camera/tunnel helpers, one cached layer

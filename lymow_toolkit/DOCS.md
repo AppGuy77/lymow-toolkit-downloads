@@ -28,8 +28,15 @@ fault auto-recovery, mow history, remote control, and more — for the Lymow One
 ## Updates
 
 When a new toolkit version is released, Home Assistant shows an **Update** button on the app's
-page. Your login, settings, and backups are stored in the app's persistent data folder and
-survive every update and rebuild.
+page. The Toolkit also shows a ⚠️ in its own header when one is out. Your login, settings, and
+backups are stored in the app's persistent data folder and survive every update and rebuild.
+
+To update without pressing anything, turn on **Auto update** on this add-on's page. **Watchdog**,
+on the same page, restarts the add-on if it ever stops — worth having on for a mower that is being
+monitored.
+
+The Toolkit cannot update itself here, and that is deliberate: add-on updates belong to
+Supervisor, which already knows how to do them safely.
 
 ## Notes
 
