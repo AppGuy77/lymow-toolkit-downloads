@@ -1,40 +1,24 @@
-# Lymow Toolkit — Home Assistant add-on image. Built ON the user's HA machine at install time
-# (no prebuilt registry): it downloads the OFFICIAL versioned docker bundle from the public
-# GitHub release — the exact obfuscated bits every other platform ships — and applies the same
-# proven steps as the standalone Docker build. python:3.12-slim is multi-arch, so this builds
-# natively on amd64 / aarch64 (Raspberry Pi 4-5, ODROID) / armv7 HA boxes.
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
-FROM python:3.12-slim
+# Lymow Toolkit — Home Assistant add-on image.
+#
+# PULLS the official prebuilt multi-arch image instead of rebuilding it on the user's Home
+# Assistant machine. This file used to start FROM python:3.12-slim and then, on the user's box,
+# apt-install ffmpeg, pip-install Playwright, download Chromium, download the release bundle and
+# fetch cloudflared — every install and every update. On a Raspberry Pi that took HOURS, and it
+# ran again for every new version.
+#
+# ghcr.io/appguy77/lymow-toolkit already contains all of that, built once by CI for amd64, arm64
+# and armv7 (.github/workflows/docker-ghcr.yml). Supervisor pulls the layer for the machine's own
+# architecture, so an add-on install or update is now a download rather than a build — the same
+# thing `docker compose pull` does for Docker users.
+#
+# The tag is pinned to the add-on's version, never :latest. Home Assistant decides when to update
+# an add-on, and a floating tag would let the image change underneath a version the user has not
+# chosen to move to.
+ARG BUILD_FROM
+FROM ghcr.io/appguy77/lymow-toolkit:1.44.0
 
-ARG LYMOW_VERSION=1.44.0
-WORKDIR /app
-
-# app payload (official release bundle) + python deps + camera/tunnel helpers, one cached layer
-# Google-sign-in browser = the Playwright chromium build (most compatible headless build; the Debian
-# distro build silently crashed on some hosts). armv7 has no Playwright build -> Debian chromium.
-ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg fonts-liberation dbus curl ca-certificates \
-    && dbus-uuidgen --ensure=/etc/machine-id \
-    && arch="$(dpkg --print-architecture)" \
-    && if [ "$arch" = "amd64" ] || [ "$arch" = "arm64" ]; then \
-         pip install --no-cache-dir playwright \
-         && (playwright install --with-deps --no-shell chromium \
-             || playwright install --with-deps chromium); \
-       else apt-get install -y --no-install-recommends chromium; fi \
-    && curl -fsSL --retry 3 -o /tmp/lymow.tar.gz \
-       "https://github.com/AppGuy77/lymow-toolkit-downloads/releases/download/v${LYMOW_VERSION}/lymow-docker-v${LYMOW_VERSION}.tar.gz" \
-    && tar xzf /tmp/lymow.tar.gz -C /tmp \
-    && cp -a /tmp/lymow-docker/. /app/ \
-    && rm -rf /tmp/lymow.tar.gz /tmp/lymow-docker \
-    && pip install --no-cache-dir -r requirements.txt \
-    && case "$(dpkg --print-architecture)" in armhf|armel) cfarch=arm;; i386) cfarch=386;; *) cfarch="$(dpkg --print-architecture)";; esac \
-    && (curl -fsSL --connect-timeout 10 --max-time 180 --retry 2 -o /usr/local/bin/cloudflared \
-       "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${cfarch}" \
-       && chmod +x /usr/local/bin/cloudflared \
-       || echo "WARN: cloudflared fetch skipped (remote tunnel off; LAN/HA access still works)") \
-    && apt-get purge -y curl && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
-
-# /data is Home Assistant's persistent add-on volume: login/config/backups survive updates & rebuilds
+# /data is Home Assistant's persistent add-on volume: login/config/backups survive updates and
+# rebuilds. Everything else — host, port, no reload — matches the standalone Docker image.
 ENV LYMOW_HOST=0.0.0.0 LYMOW_PORT=8787 LYMOW_RELOAD=0 PYTHONUNBUFFERED=1 LYMOW_DATA=/data
 EXPOSE 8787
 CMD ["python", "-m", "app.run"]
