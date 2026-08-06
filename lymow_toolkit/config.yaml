@@ -1,10 +1,19 @@
 # Lymow Toolkit — Home Assistant add-on manifest. The version placeholder is stamped by
 # tools/make_ha_addon.sh from the repo VERSION file, so the add-on tracks the toolkit release.
 name: Lymow Toolkit
-version: "1.45.0"
+version: "1.45.1"
 slug: lymow_toolkit
 description: Local companion dashboard for the Lymow One robotic mower
 url: https://github.com/AppGuy77/lymow-toolkit-downloads
+# armv7 IS SUPPORTED ON PURPOSE — DO NOT REMOVE IT.
+# Supervisor lists armv7 under ARCH_DEPRECATED (supervisor/const.py) and logs
+#   "App 'Lymow Toolkit' uses deprecated 'arch' values: ['armv7']"
+# on every store refresh. That warning is cosmetic: deprecated is not removed, Supervisor still
+# resolves it through ARCH_ALL_COMPAT, and it does NOT block install or update (the greyed-out
+# Update button reported against v1.45.0 was a separate, HA-side condition — an add-on whose
+# container is not running reports no stats, and HA marks its update entity unavailable).
+# Dropping armv7 here would lock 32-bit ARM users out of the add-on to silence a log line.
+# We build and publish an armv7 image; the add-on keeps offering it.
 arch:
   - amd64
   - aarch64

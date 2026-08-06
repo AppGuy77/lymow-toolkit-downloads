@@ -1,47 +1,42 @@
-## v1.45.0 — the mower really restarts after an error, and your own time zone
+## v1.45.1 — hotfix: the map paints what the mower actually cut
 
 
-- 🔁 After an error the Toolkit now confirms the mower actually restarted, and keeps trying until it does
-- ⏱️ "Wait before restart" is now honored by every fault, including a bumper jam
-- 🎨 Coverage painting keeps itself up to date even with no browser open
-- 🏠 "Mower returns to dock on an error" is now really sent to the mower, and stops disagreeing with auto-pause
-- 🕐 Time zone has its own place in Settings, with daylight saving you can turn off
-- 🐳 The Docker image is searchable now — pull it straight from Unraid, a UGREEN NAS or Docker Desktop
+- 🎨 The map now fills in as the mower cuts — it used to show almost nothing at 60% done
+- ⚡ A charging bolt on the battery, visible in every mode including remote control
+- 📊 Remote control no longer hides the status — you can see Charging, or a mow on hold, while you drive
+- ▶️ Resume now appears for a mow you paused in the Lymow app, instead of "Start mow"
+- 📍 Zones and paint sit more accurately on the satellite image
 
 
 **Fixed**
 
-- **The mower often did not restart after an error.** The Toolkit sent the resume and assumed it worked —
-  on a raised cutting deck only one mower in four actually got going again. It now checks the mower is
-  really moving and keeps trying until it is, then records whether it worked.
-- **"Wait before restart (seconds)" was ignored for a bumper jam (E44)**, which cleared instantly. Every
-  fault waits out the same countdown now.
-- **Coverage painting fell behind when nobody was watching.** With the page closed the Toolkit stopped
-  collecting the mowed path, so the map filled in wrong. It keeps up on its own now.
-- **"Mower returns to dock on an error" was not sent.** Turning on Safety auto-pause said it had switched
-  the setting off on the mower, but nothing reached the mower. The toggle also flipped itself back and
-  claimed the mower had never reported it.
-- **Timestamps ignored your time zone.** The mow calendar, the RTK logs and "last checked" used the zone of
-  whichever browser you were looking at, so a late-evening mow could sit on the wrong day.
-- **Automatic updates installed on the server's clock, not yours** — "install at 3:00 AM" meant something
-  else entirely on a NAS set to UTC.
-- **Docker and Home Assistant installs offered an automatic-update time** they cannot act on. Those update
-  from the add-on page or with `docker compose pull`, and now say so.
-
-**New**
-
-- **Time zone is its own section in Settings.** It was buried in Night lights even though it sets every time
-  the Toolkit shows and every time it acts on. It also shows the offset it is on right now.
-- **Daylight saving can be turned off.** Leave it on and clocks move with the seasons as usual; turn it off
-  and the Toolkit holds one offset from UTC all year.
-- **The image is searchable on NAS systems.** Search "lymow" in Unraid's Apps tab, a UGREEN NAS or Docker
-  Desktop and pull `appguy77/lymow-toolkit` — no more typing a full registry path.
-- **The Lymow Toolkit name in the header opens the Facebook group.**
+- **The mowed area barely showed on the map.** A mow at 60% done could leave the map looking untouched,
+  with only the narrow strips filled in. The Toolkit was drawing the mower's report as a thin trail of
+  points instead of the areas it actually describes, so nearly all of the cut was invisible. The map now
+  fills in the mowed ground the way the Lymow app does, including the unmowed patches left inside a zone,
+  and it keeps up while the mow is still running rather than only catching up at the end.
+- **Zones the mower had finished did not fill in.** Completed zones now fill as soon as the mower says it
+  has finished them, instead of waiting for the whole mow to end.
+- **The status disappeared while using remote control.** The mower can only report one status at a time,
+  so "Remote control" replaced everything else — you could not see that it was charging, or that a mow was
+  waiting on hold. It now shows what the mower is really doing while you drive it.
+- **There was no way to tell if the mower was charging** unless it happened to be reporting "Charging".
+  A charging bolt now sits next to the battery wherever the battery is shown, and it stays correct in
+  remote control, on the way to the dock, and mid-mow.
+- **"Start mow" appeared instead of "Resume"** for a mow started or paused in the Lymow app, or one that
+  was already running when the Toolkit was opened or restarted. Pressing it began a brand-new mow and threw
+  away the rest of the cut. The Toolkit now recognizes an unfinished mow it did not personally watch begin,
+  and offers Resume — the same as the Lymow app.
+- **Buttons could act on a stale status.** Some updates from the mower left the Toolkit's controls working
+  from a reading it had already moved on from.
+- **The map sat slightly askew on the satellite image.** Zones, paint and the heat maps drifted further from
+  their true position the further they were from the mower's base station — roughly half a metre per 200
+  metres. Everything is placed accurately now, so expect your zones to shift very slightly and line up
+  better with what you see underneath.
 
 ---
 
-From **v1.43 or earlier**? v1.44 added update notifications and one-click updates, fixed the light coming on
-at every mow, stopped the camera running unwatched on 4G, and fixed the Wi-Fi camera on macOS and Linux.
-Full details:
+Coming from **v1.44 or earlier**? v1.45 made the mower really restart after an error, gave time zone its own
+section in Settings, and made the Docker image searchable on NAS systems. Full details:
 [CHANGELOG](https://github.com/AppGuy77/lymow-toolkit-downloads/blob/main/CHANGELOG.md) ·
 [Wiki](https://github.com/AppGuy77/lymow-toolkit-downloads/wiki)
