@@ -1,46 +1,53 @@
-Lymow Toolkit v1.47.0
+Lymow Toolkit v1.47.1
 
-Everything below is a change from v1.46.3.
-
-
-- The crossing sweep of a cross-cut is now painted in its own color, so you can see whether it missed anything.
-- Pick that color and how see-through it is, right beside the Cross-cut checkbox.
-- Both colors stay on the map after the mow, and a new mow now clears only the zones it will actually cut.
-- The map remembers where you panned and zoomed to, with a new button to put the whole yard back.
+Everything below is a change from v1.47.0.
 
 
-## New
+- Fixed: a mow without a cross-cut could paint part of the map in the cross-cut color, turning green trail orange behind the mower.
+- Cutting parameters is now one panel, Mowing settings, with a single Save all settings button.
+- Apply to mower is gone: the mower does not change a mow already running for any of these settings, and the app no longer claims it does.
+- Blade speed is four buttons — Eco, Standard, Power, Turbo — with the one you are set to highlighted.
 
-**See what the crossing sweep actually covered.** A cross-cut mows the same zone twice, in two
-directions, and both used to be painted the same green — so there was no way to tell whether the
-second sweep had missed a strip. The crossing sweep is now painted in its own color (orange by
-default) on top of the first, so anywhere it has not reached yet still shows as mowed underneath and
-stands out.
-
-**Choose the color and its transparency.** Both sit next to the Cross-cut checkbox — in Cutting
-parameters and in the multi-pass panel. It is one setting, so changing it in either place changes it
-in the other. Turn the transparency down to see the first sweep through the second and compare them.
-
-**The map remembers where you left it.** Your pan and zoom are kept for each mower instead of
-snapping back to the whole yard every time you open the Toolkit. The new 🔄️ button beside the
-fullscreen button puts the whole yard back.
-
-**A wiki link in the header**, beside the version number, opening the full user guide in a new tab.
 
 ## Changed
 
-**A new mow clears the paint only for the zones it will cut.** Previously, starting any mow cleared
-the whole map for that mower. Mow the front and the back stays exactly as you left it. The 🗑️
-button still clears everything for that mower whenever you want a clean slate.
+**One panel, one Save button.** Cutting parameters was split into two groups — "live settings" with an
+**Apply to mower** button, and "map settings" saved for later. The split described a distinction the
+mower does not make. Whichever button you pressed, the machine stored the setting and used it from the
+next mow; nothing in that panel has ever changed a mow already in progress. The panel is now
+**Mowing settings**, and **Save all settings** keeps everything in it: cut height, mowing speed, path
+spacing, blade speed, mow pattern, cut angle, cross-cut, mow order, perimeter laps and direction,
+no-go laps, obstacle detection, edge following, outer discharge and channel travel.
 
-**Finished zones keep their colors.** Both the first sweep and the crossing sweep stay on the map
-through a completed mow, a cancelled one, and a return to the dock.
+To change how the mower is cutting right now, stop the mow, save your settings, and start it again.
 
-## Worth knowing
+**Blade speed is four buttons.** Eco, Standard, Power and Turbo sit across the panel with the one you
+are set to highlighted, instead of a dropdown that hid three of the four behind a click.
 
-**Mows started from the official Lymow app.** When a mow is started from the official app — or by a
-schedule set inside it — the mower never tells the Toolkit which zones that mow will cover. It only
-reports zones as it finishes them. Mows started from the Toolkit are unaffected. The practical
-effect: if an app-started mow is cancelled part-way, the Toolkit cannot tell which zone that partial
-paint belongs to, so it is cleared when the next mow starts rather than kept. Zones that finish are
-recorded correctly either way.
+**A more usable order.** Path spacing moved up next to cut height and mowing speed, where you compare
+them; channel travel moved to the bottom of the panel under its own heading, since it is about
+crossing between zones rather than about cutting.
+
+**The mow pattern saves with everything else.** It had its own Set button, which could only work with
+the mower idle. It is now part of Save all settings.
+
+## Fixed
+
+**A mow without a cross-cut could turn orange.** The cross-cut color added in v1.47.0 decided a
+crossing sweep had begun from the mower's own area figures alone, without checking whether the zone
+was set to cross-cut at all — so an ordinary pass boundary, such as moving from the interior to the
+perimeter laps or on to the next zone, could start it. Because the starting moment is worked out
+backwards from those figures, it recolored trail that had already been painted green, which is why
+it appeared behind the mower some time after the grass was cut. The crossing color is now used only
+where a crossing sweep can actually exist. Existing wrong orange clears when you update; your
+coverage is not affected.
+
+**The help text told you things that were not true.** The panel heading, the section headers, the
+save hint, the channel-travel help bubbles, the blade-speed help and two entries in the in-app
+glossary (📖) all described settings taking effect on a running mow. They have been rewritten to say
+what actually happens.
+
+**A settings message now matches the official app exactly.** The message the Toolkit uses for cut
+height, mowing speed and blade speed carried two extra fields the official app does not send. It is
+now byte-for-byte the message the app sends. This is the message used at mow start and by scheduled
+mows.
