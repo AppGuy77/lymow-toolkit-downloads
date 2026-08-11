@@ -1,44 +1,57 @@
-Lymow Toolkit v1.48.1
+Lymow Toolkit v1.48.2
 
-Everything below is a change from v1.47.1.
-
-
-- New: Return to dock path — Direct Route or Follow Perimeter — in Settings → Mowing options.
-- Fixed: Mow in rain "Off" and the Charging Handbrake never actually applied. Nor would Follow Perimeter have.
-- "Charging lock" is now "Charging Handbrake", set to On or Off, and the dropdowns no longer say "Select…".
-- Fixed: in the fullscreen map the ✕ Exit button covered the camera button, and reset view was missing.
+Everything below is a change from v1.48.1.
 
 
-## New
+- Fixed: a mower could show as "(offline)" in the mower list while its live data was on screen.
+- Fixed: finishing a zone painted the whole zone green, including ground the mower never reached.
+- Fixed: "Update check failed — certificate verify failed" on machines that were otherwise fine.
+- RTK logs now record about every 2 seconds instead of every 30, so they show your mower's real reporting rate.
 
-**Return to dock path.** The same setting the official app has, now in **Settings → Mowing
-options**: **Direct Route** sends the mower straight back across the lawn, **Follow Perimeter** takes
-it round the zone edge instead. It is stored on the mower, so it applies to every trip home including
-scheduled mows and mows started from the app.
-
-The Toolkit has always respected whatever you had set in the app — it never overwrote it. There was
-simply no way to change it from here.
 
 ## Fixed
 
-**Settings whose value is "zero" never reached the mower.** This affects controls you already had:
-**Mow in rain → Off** and the **Charging Handbrake**, plus the new **Follow Perimeter**. All three
-are sent as a value of zero, and zero was being dropped from the message on the way out. The mower
-does not treat a missing value as "set it to zero" — it keeps what it already had. So choosing those
-options appeared to work and changed nothing. They are sent properly now, and the Toolkit reads the
-setting back off the mower afterwards rather than assuming.
+**A mower could show as "(offline)" while it was running.** The word beside your mower's name in the
+mower list was read once, when the Toolkit started up, and then never checked again. If your mower
+happened to be asleep at that moment — on the dock overnight, powered off, or off the network — it
+stayed labeled offline for as long as the Toolkit kept running, even with its live data on the screen
+in front of you. Nothing was wrong with the mower.
 
-**The message these settings travel in now matches the official app exactly.** It carried two extra
-pieces of information the app does not send, which can cause the mower to ignore a settings write.
+That word is now re-checked as you use the Toolkit, and while you are connected to a mower it comes
+from that mower's own live data rather than a stored answer. If the state cannot be confirmed at that
+moment, the name is shown on its own — better to say nothing than to show a word we cannot stand
+behind.
 
-**Charging Handbrake.** "Charging lock" is renamed to what it actually is — a parking brake that
-locks the mower's wheels while it is charging so it cannot roll or be pushed off the dock contacts —
-and it is simply **On** or **Off**.
+**Finishing a zone painted the whole zone green.** When a zone completed, the map filled its entire
+shape in, on the reasoning that a finished zone should not look patchy. But that covered ground the
+mower never actually reached: around obstacles, strips it skipped, corners it could not get into. The
+map showed a clean finished lawn whether or not the mower had cut it.
 
-**The Mowing options dropdowns no longer say "Select…".** Each shows what your mower is actually set
-to. Until the mower has reported a setting the control waits instead of displaying a value it has not
-confirmed.
+The map now shows only what your mower reported cutting. A finished zone can therefore show real
+gaps — that is the point, and it is worth knowing that a zone will look less uniformly green than it
+did before. This applies to ordinary mows and cross-cut mows alike.
 
-**Fullscreen map buttons.** The **✕ Exit** button was drawn directly on top of the **camera** button,
-and the **reset view** button was hidden in fullscreen altogether. Every corner button now stacks
-properly and stays reachable.
+**"Update check failed — certificate verify failed."** On some machines the Toolkit could sign in,
+show your mower and run perfectly, yet fail to check for or install updates with a certificate error.
+It looked like an antivirus or network problem, and the Toolkit's own message unhelpfully suggested
+exactly that. It was neither. Different parts of the Toolkit were checking internet certificates
+against different lists, and the part that handles updates was using one that is empty on some
+installs.
+
+Every internet connection the Toolkit makes now uses the same verified list of certificates, added to
+whatever your own computer already trusts, so nothing that worked before stops working. If a check
+does fail, the message now says what was actually verified instead of guessing.
+
+If your workplace or antivirus genuinely does inspect secure connections, you can point the Toolkit
+at its certificate by setting `LYMOW_CA_BUNDLE` to that file.
+
+## Improved
+
+**RTK logs record about every 2 seconds instead of every 30.** With recording switched on, the
+Toolkit now asks your mower for satellite and radio readings as fast as the mower is willing to
+answer. Before, with no browser open, it only asked every 30 seconds — so the log showed how often
+*we* were asking rather than how often your *mower* was reporting, and a mower reporting quickly
+looked identical to one reporting slowly.
+
+Recording uses noticeably more data while it is switched on, so turn it off when you have finished
+capturing.
