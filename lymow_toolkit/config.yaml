@@ -1,7 +1,7 @@
 # Lymow Toolkit — Home Assistant add-on manifest. The version placeholder is stamped by
 # tools/make_ha_addon.sh from the repo VERSION file, so the add-on tracks the toolkit release.
 name: Lymow Toolkit
-version: "1.48.2"
+version: "1.49.0"
 slug: lymow_toolkit
 description: Local companion dashboard for the Lymow One robotic mower
 url: https://github.com/AppGuy77/lymow-toolkit-downloads
@@ -25,6 +25,25 @@ boot: auto
 # is reachable from phones/PCs out of the box — the reliable setup on a Pi/NUC, where the bridge network
 # can fail to forward published ports to the LAN (the "works on localhost, refused from the LAN" symptom).
 host_network: true
+# "Stay signed in" keeps its unlock key HERE (mounted at /config), never in /data where the
+# encrypted record lives. Two different volumes on purpose: a copied add-on data folder, a shared
+# snapshot or a partial backup then carries one half and never both. The key is also tied to the
+# machine's own hardware, so even both halves are useless on another box.
+#
+# NO `devices:` ENTRY FOR THE TPM, deliberately. Sealing to a TPM chip would be a small upgrade for
+# the few x86 Home Assistant boxes that have one, but Home Assistant's docs do not say what
+# Supervisor does with a device path that does not exist — and it does not exist on any Raspberry
+# Pi. Risking add-on startup for every Pi user to gain a rare tier is a bad trade; the machine-bound
+# tier already makes a copied card or backup useless. Revisit only with a real Pi to test on.
+#
+# `addon_config` (not `app_config`): newer Supervisor renamed it and logs
+#   "App 'Lymow Toolkit' uses legacy map type 'addon_config'; use 'app_config' instead."
+# That warning is cosmetic — the old name still works everywhere — while the NEW name is unknown to
+# older Supervisor builds and would fail validation there. Same trade already documented for armv7
+# above: a log line costs nothing, locking users out costs everything.
+map:
+  - type: addon_config
+    read_only: false
 ports:
   8787/tcp: 8787
 ports_description:
