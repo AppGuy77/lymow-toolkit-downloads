@@ -15,7 +15,7 @@
 # an add-on, and a floating tag would let the image change underneath a version the user has not
 # chosen to move to.
 ARG BUILD_FROM
-FROM ghcr.io/appguy77/lymow-toolkit:1.49.1
+FROM ghcr.io/appguy77/lymow-toolkit:1.50.0
 
 # /data is Home Assistant's persistent add-on volume: login/config/backups survive updates and
 # rebuilds. Everything else — host, port, no reload — matches the standalone Docker image.

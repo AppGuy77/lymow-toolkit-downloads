@@ -22,8 +22,9 @@ fault auto-recovery, mow history, remote control, and more — for the Lymow One
    Raspberry Pi. Later updates are much faster.
 4. Click **Start**, then **Open Web UI** and sign in with your Lymow account (the same email and
    password as the official app). Prefer **"Sign in with Google"**? It opens an on-box browser
-   right inside the dashboard (the app bundles Chromium for this) — sign in to Google there and
-   it finishes on its own, no copy/paste.
+   right inside the dashboard (the app bundles Firefox for this) — sign in to Google there and
+   it finishes on its own, no copy/paste. On 32-bit ARM boards (older Raspberry Pi OS installs)
+   no on-box browser exists, so Google sign-in is unavailable there — use email and password.
 
 ## Updates
 
@@ -39,6 +40,10 @@ The Toolkit cannot update itself here, and that is deliberate: add-on updates be
 Supervisor, which already knows how to do them safely.
 
 ## Notes
+
+- **Sidebar panel (ingress):** the Toolkit appears in Home Assistant's own sidebar and opens
+  there — no port to type, no second password, and it works through Nabu Casa remote access. You
+  are already signed in to Home Assistant, so the Toolkit does not ask again.
 
 - **Port:** the dashboard listens on port 8787 (changeable on the app's Configuration tab under
   Network). Anything on your network can reach `http://<home-assistant-ip>:8787`.

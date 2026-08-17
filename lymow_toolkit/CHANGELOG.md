@@ -1,49 +1,63 @@
-Lymow Toolkit v1.49.1
+Lymow Toolkit v1.50.0
 
-Everything below is a change from v1.49.0. Three fixes, no new features.
+Everything below is a change from v1.49.1.
 
 
-- Fixed: the map could draw a backup you saved months ago as though it were your mower's current map.
-- Fixed: a mower parked on its dock could show no mower icon on its own map.
-- Fixed: "Stay signed in" could forget your password by itself and send you back to the sign-in screen.
-- When the mower's map isn't available, the Toolkit now says why instead of just "waiting".
+- New: the Toolkit runs inside Home Assistant — a sidebar panel, with every mower on your account published for automations.
+- New: keep your stripes — an optional setting so canceling a mow no longer turns the zones it already cut red.
+- New: resume a mow that has already started for the dock, from the "Mow on hold" card.
+- Fixed: with more than one mower, switching to another could leave it stuck on "Connected — idle"; it now goes live with its own map.
+- Fixed: the sign-in screen's phone QR — centered, a real away-from-home link (not just your local address), and Save-to-Home only for your permanent link.
+- Fixed: logging out could leave you signed in, and an in-app update on Windows could fail.
 
+
+## Home Assistant users — please read before updating
+
+This release adds the Toolkit as a **Home Assistant sidebar panel** (ingress). Because that changes
+how the add-on is wired into Home Assistant, the first setup after updating can need a little
+patience:
+
+- **You may need to run "Clear Data" and "Set up Home Assistant" more than once** until everything
+  repairs cleanly. If the panel or the mower entities look wrong after the update, open the Toolkit's
+  Home Assistant setup, **Clear Data**, then **Set up Home Assistant** again — repeat until it comes
+  up clean. This is a one-time settling after the change, not a fault with your mower.
+- **The automations integration needs a long-lived access token.** To let Home Assistant automations
+  control your mowers, create a **Long-Lived Access Token** in Home Assistant (your profile →
+  Security → Long-Lived Access Tokens) and give it to the Toolkit's Home Assistant setup when asked.
+- **On a low-powered Home Assistant system** (an older Raspberry Pi or a small VM), **signing in with
+  Google can be slow or difficult** — the sign-in runs a browser on the box, and limited memory or a
+  slow disk can make it struggle. A computer, a Mac, or a faster machine handles it easily, or sign
+  in with your **email and password** on the Home Assistant box instead.
+
+## New
+
+**The Toolkit runs inside Home Assistant.** It installs as a **sidebar panel**, opened from Home
+Assistant itself with Home Assistant's own login, and it works through Nabu Casa remote access.
+**Every mower on your account is published to Home Assistant**, so your automations can see and
+control any mower — not only the one you happen to be looking at.
+
+**Keep your stripes when you cancel a mow.** Off by default. Turn it on in the Freshness settings and
+canceling a mow **keeps the zones it already finished marked as freshly mowed**, instead of turning
+them red. It's for the workaround where you cancel to stop the mower driving across finished stripes
+to reach the rest, hand-mow the awkward bits, and restart elsewhere. Only the zones actually finished
+before you cancel are kept — never the one it was mid-way through.
+
+**Resume a mow that has started for the dock.** A **Resume mowing** button on the "Mow on hold" card
+sends the mower back out to finish, even when it has already turned for home.
 
 ## Fixed
 
-**The map could show you an old map and say nothing.** When your mower's own map had not arrived
-yet, the Toolkit worked down a chain of fallbacks — and the last one was a **backup you had saved**,
-possibly months earlier. It was drawn like any other map: no date, no marking, no way to tell it
-apart from the real thing. Once zones have been edited, or a different map made active, that file is
-simply wrong.
+**Switching between mowers could leave one stuck on "Connected — idle".** With more than one mower,
+selecting a different one could leave it connected but never going live, showing an old map.
+Selecting a mower now brings **it** live and draws **its own** map straight away.
 
-Backups exist so a map can be **restored**, not so one can be displayed. They are no longer drawn at
-all, and restoring them is completely unchanged.
+**The sign-in screen's phone QR code.** It was left-justified — now **centered**. It only ever showed
+your **local network address**, so it was no use for logging in from your phone or from away — now it
+gives you a **working away-from-home link**. And it used to invite you to **Save it to your Home
+Screen even when the link was temporary** and would stop working after a reboot — Save-to-Home is now
+only offered for your **permanent** link.
 
-There was a second way to see an old map: the Toolkit remembers the last good map it received, so a
-briefly corrupted update doesn't blank the screen mid-mow. That memory had no time limit, so if the
-mower stopped reporting entirely, the remembered map stayed on screen looking current. It now only
-applies while the mower is actually sending data.
+**Logging out.** Logging out could fail and leave you signed in. It now logs you out.
 
-And when there is no map to show, the Toolkit says **why**: the mower is asleep, another app is
-holding your account's single cloud connection, it is reconnecting, or your sign-in expired. When it
-shows the copy from your Lymow account, it tells you how old that copy is. Previously it said only
-that it was waiting, which made a five-second wait look identical to a mower that had been asleep
-since Tuesday.
-
-**A mower could be missing from its own map.** If it was parked at the map's origin point, the
-Toolkit drew no mower icon at all — while a second mower out on the lawn appeared normally. The
-mower's position was being read from one source that reports nothing in that exact situation.
-
-It now reads from every source available, so the icon appears whenever anything knows where the
-mower is. When genuinely nothing does — some mowers only report a position while mowing — the map
-says so instead of quietly leaving the mower off.
-
-**"Stay signed in" could forget your password.** Roughly one saved password in thirty was
-unreadable the next time the Toolkit needed it, so you were sent back to the sign-in screen with no
-explanation, as if you had never ticked the box. This was a fault in how the saved password was
-locked to your machine, and it affected v1.49.0 only.
-
-If it happened to you: sign in, tick **Stay signed in** once more, and it will stay this time.
-Nothing was exposed — the failure was that the password could not be read back, not that anyone
-else could read it.
+**Updating from inside the app.** On Windows, an update applied from within the Toolkit could fail.
+In-app updates now complete cleanly.
