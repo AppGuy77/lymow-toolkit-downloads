@@ -1,54 +1,55 @@
-Lymow Toolkit v1.50.2
+Lymow Toolkit v1.50.3
 
-Everything below is a change from v1.50.1.
-
-
-- Camera improvements to reduce latency — the live camera is much more responsive on every platform, including inside Home Assistant — and the download is about 137 MB smaller.
-- New: if an interrupted mow is still stored on the mower (why a mower can "start mowing on its own"), the Toolkit shows a banner and lets you cancel it, confirmed by the mower.
-- Fixes for: cross-cut paint, zone settings saving everything as custom, mowers stuck at "connected (idle)", and Home Assistant setup on large installs.
+Everything below is a change from v1.50.2.
 
 
-## Camera
+- Fixed: a zone's custom settings could be silently erased when a mow started — a custom-angle zone would mow with the global pattern instead. Mow-start writes now carry the zone's complete configuration, and the event log proves what was sent and what the mower kept.
+- Cross-cut mows should now paint the crossing pass in its own color, from the moment the angle changes — small zones included.
+- Fixed: mowers could go silent after startup (no telemetry, no map, stuck on "connected (idle)") until you restarted — most visible in Home Assistant.
+- Fixed: mows scheduled in the Toolkit never started. They work again — check your schedules, forgotten ones will now fire.
+- Wi-Fi camera always falling back to 4G? Your router must allow multicast — turn ON both multicast routing and IGMP Snooping. The Toolkit now says this on screen, and tells you separately when the signal is simply too weak for video.
 
-**Camera improvements to reduce latency.** The live camera is much more responsive — on Windows,
-Mac, Linux and Docker, and inside Home Assistant too. The WiFi/4G choice is unchanged, the download
-is about **137 MB smaller** on every platform, and the camera now reconnects on its own when you
-return to a window it had stopped in to save data. The Start/Stop camera button always reflects the
-real camera state.
 
-## Mowing
+## Zone settings and mow start
 
-**Leftover-mow banner.** The mower keeps its mowing job in its own memory — docking, from any app or
-a fault, does not cancel it, and the mower can take itself back out later to finish it. That stored
-job is why a mower can "start mowing on its own" with no command and no schedule. The Toolkit now
-shows a banner whenever an unfinished mow is stored while the mower is docked or idle, and lets you
-cancel it with one tap — confirmed by reading the mower back.
+Saving a zone stored your settings correctly — but starting a mow could wipe part of them off the
+mower. The mower replaces a zone's stored settings wholesale, so a partial write at mow start
+erased whatever it didn't mention: a zone set to mow at a specific angle would silently fall back
+to the global pattern. Every zone write now carries the zone's complete configuration, the event
+log shows a readable "Zone settings sent" entry with everything in it, and a read-back confirms
+"Zone settings confirmed on the mower."
 
-**The event log names who sent every command** — you, a schedule, or Home Assistant — and flags any
-mow the mower started by itself.
+If a zone of yours has been mowing with the wrong pattern: open that zone's settings and press
+Save once after updating — the full configuration lands on the mower and stays.
 
-**Cross-cut paint fixed.** The first pass should no longer turn the cross-cut color; orange should
-appear only when the crossing pass actually starts.
+## Cross-cut painting
 
-**Zone settings fixed.** Changing one zone setting should no longer mark every setting as a custom
-override — only what you actually changed is saved, the way the official app does it.
+The crossing pass should now paint in the cross-cut color from the moment the mower changes angle
+and starts its second direction — on small zones too, where it previously never triggered. The
+split between the base color and the cross color lands at the true boundary. The color can trail
+the mower by a few seconds; that is the mower recomputing its own mowed-area report, not the
+Toolkit. And if the color ever doesn't appear, the event log now records the exact reason as a
+`cross_claim` entry — include it when you report a problem and the diagnosis is one line.
 
-## Connection
+## Mowers going silent
 
-**Mowers stuck at "connected (idle)"** that never went live should now connect on their own — and
-opening the page forces a fresh connection attempt immediately.
+A mower could connect and then never send anything — no telemetry, no map, stuck on "connected
+(idle)" — until the Toolkit was restarted. It happened when two parts of the Toolkit connected to
+the same mower at the same moment, most often on Home Assistant. Fixed, and it now heals itself if
+it ever loses its stream.
 
-## Remote
+## Scheduled mowing
 
-**The Remote deck height follows the mower's state.** Mowing shows the mow height, returning
-through channels the channel height, docked the maximum (the mower raises its deck on the dock),
-and paused whatever it was doing before the pause. Starting the remote camera also sets the deck to
-that height so it matches. Moving the slider changes the deck as soon as you let go, and the
-optional **"Remember my Remote settings"** switch uses your last applied remote height instead
-(never while a mow is running).
+Mows scheduled **in the Toolkit** were not firing. They fire again — so check your schedules
+before this update, because ones you forgot about will now run.
 
-## Home Assistant
+## The Wi-Fi camera and your router
 
-The old separate **camera entity** and **Camera on/off switch** are retired — the live camera lives
-in the Toolkit panel; updating removes the old entity for you. **Set up Home Assistant** should no longer
-fail on large HA installs.
+The Wi-Fi picture goes straight from your phone or PC to the mower, and the two find each other
+using **multicast**. A router that blocks it makes the Wi-Fi camera impossible — in the Toolkit
+*and* in the official Lymow app — while 4G keeps working. Turn ON **both** *multicast routing*
+(usually LAN → IPTV) and *IGMP Snooping* (usually Wireless → Professional), and keep the mower on
+the same network as your phone, not a Guest network. Instead of "mower not reachable on WiFi", the
+Toolkit now names this on screen — and a mower whose Wi-Fi reads -75 dBm or weaker gets the
+different, correct message: the signal itself is too weak for video, and no router setting fixes
+that one.
