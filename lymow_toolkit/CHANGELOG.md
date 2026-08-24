@@ -1,34 +1,32 @@
-Lymow Toolkit v1.51.1
+Lymow Toolkit v1.51.2
 
-Everything below is a change from v1.51.0.
-
-
-- Zone previews now show what the next mow will actually cut — never settings lingering on the mower, and never a stale flash before the truth loads.
-- The Mow pattern box always tells the truth: a mower still storing Chess Board (cross-cut) from an old setup now shows it, so you can switch it off with one Save.
-- Updates and reinstalls always install cleanly (no more silent Windows "repair" mode breaking the service). Add/Remove Programs now shows a technical number like 1.51.199 — normal; the real version is in the app.
+Everything below is a change from v1.51.1.
 
 
-## Previews that match reality
+- Remote control away from home works again: through your away link, the joystick and the fullscreen driving controls should now unlock as soon as the live picture arrives (they stayed disabled even with live video).
+- On phones, the camera now uses your phone's true fullscreen — the browser's bars disappear when you rotate to landscape. If the phone drops fullscreen (keyboard, notification, a swipe), a centered ⛶ button should bring you straight back.
+- If the live picture dies mid-session, the blades stop, the reason appears on screen, and on Auto the camera reconnects by itself.
 
-Zone thumbnails used to render settings as stored ON THE MOWER — which can include a cross-cut
-pattern you turned off in the Toolkit long ago (the mower keeps old settings until something
-rewrites them). Zones then previewed crossed stripes nobody had selected. Previews now layer your
-Toolkit settings over the mower's stored ones exactly the way a mow start applies them, so what
-you see is what the next mow cuts. And a preview never paints a stale pattern first: it waits for
-the truth and paints once, right.
 
-## The pattern box tells the truth
+## Remote control away from home
 
-If your mower still stores Chess Board (cross-cut) globally from an old setup, the Cutting
-parameters pattern box now SHOWS "Chess Board (cross-cut)" instead of silently displaying
-"Zigzag." To clear a leftover cross-cut: deselect all zones, open Cutting parameters, pick
-Zigzag, Save — done permanently. The pattern box and the Cross-cut checkbox are now one setting
-shown two ways, always in agreement, and an incomplete Chess Board setup can no longer be saved.
+v1.51.0's away-from-home camera shipped with a gap: a viewer on the away link got live video, but
+the joystick stayed locked and the fullscreen driving controls never appeared. Every camera path —
+at home, through the Toolkit relay, and iPhone's player — now arms the same controls the moment
+the picture is live: joystick, fullscreen button, mini-map, light, and deck sync.
 
-## Clean installs, always
+## True fullscreen on phones
 
-Installing a Toolkit build over the same version could silently enter Windows "repair" mode
-instead of installing, which could break the service until an uninstall/reinstall. Installer
-versions now strictly ascend so every install is a true install. Side effect: "Add or remove
-programs" shows a technical version like 1.51.199 — that is expected; the human version is in
-the app header and the installer file name.
+Rotating to landscape (or starting the camera in landscape) now asks the phone for real
+fullscreen, so the browser's tab and address bars disappear instead of just filling the page.
+Android grants it on the rotation itself; iPhone may ask for one tap — your first touch of the
+joystick is enough. Phones lose fullscreen easily (keyboard, notifications, an accidental swipe),
+so whenever that happens a centered ⛶ Full screen button appears on the picture — one tap
+returns. Desktop is unchanged.
+
+## A dying picture is handled, not frozen
+
+If the relayed live picture stops mid-session, the Toolkit now stops the blades immediately,
+says on screen what happened, and on the Auto camera link reconnects by itself instead of
+freezing on the last frame. On iPhone, the blade safety gate now also rides on video the Toolkit
+itself delivers, which should end spurious "camera required" blade stops during brief buffering.
