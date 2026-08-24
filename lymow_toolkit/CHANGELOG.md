@@ -1,32 +1,32 @@
-Lymow Toolkit v1.51.2
+Lymow Toolkit v1.51.3
 
-Everything below is a change from v1.51.1.
-
-
-- Remote control away from home works again: through your away link, the joystick and the fullscreen driving controls should now unlock as soon as the live picture arrives (they stayed disabled even with live video).
-- On phones, the camera now uses your phone's true fullscreen — the browser's bars disappear when you rotate to landscape. If the phone drops fullscreen (keyboard, notification, a swipe), a centered ⛶ button should bring you straight back.
-- If the live picture dies mid-session, the blades stop, the reason appears on screen, and on Auto the camera reconnects by itself.
+Everything below is a change from v1.51.2.
 
 
-## Remote control away from home
+- The camera's ⛶ fullscreen button now works on computers: on a desktop browser it was hidden underneath the camera-link (Auto/WiFi/4G) buttons, so there was no visible way into fullscreen without rotating a phone.
+- Exiting fullscreen now sticks: pressing ✕ Exit used to throw you straight back into fullscreen — it now stays out until you rotate the phone again or tap ⛶ yourself.
+- Every fullscreen button is now the simple ⛶ symbol, and the return-to-fullscreen button sits centered on the picture — it no longer covers the camera-link buttons.
 
-v1.51.0's away-from-home camera shipped with a gap: a viewer on the away link got live video, but
-the joystick stayed locked and the fullscreen driving controls never appeared. Every camera path —
-at home, through the Toolkit relay, and iPhone's player — now arms the same controls the moment
-the picture is live: joystick, fullscreen button, mini-map, light, and deck sync.
 
-## True fullscreen on phones
+## Fullscreen works on computers again
 
-Rotating to landscape (or starting the camera in landscape) now asks the phone for real
-fullscreen, so the browser's tab and address bars disappear instead of just filling the page.
-Android grants it on the rotation itself; iPhone may ask for one tap — your first touch of the
-joystick is enough. Phones lose fullscreen easily (keyboard, notifications, an accidental swipe),
-so whenever that happens a centered ⛶ Full screen button appears on the picture — one tap
-returns. Desktop is unchanged.
+On a desktop browser, the remote camera's ⛶ fullscreen button has been hidden underneath the
+camera-link (Auto/WiFi/4G) buttons since v1.47 — phones could still enter fullscreen by rotating,
+but on a computer there was no visible way in at all. The camera-link buttons now appear only in
+fullscreen (where they belong), and the ⛶ underneath is visible and clickable again. Verified by
+an automated screen-layout sweep across desktop and phone, camera view and remote, windowed and
+fullscreen: no control covers another anywhere.
 
-## A dying picture is handled, not frozen
+## Exiting fullscreen sticks
 
-If the relayed live picture stops mid-session, the Toolkit now stops the blades immediately,
-says on screen what happened, and on the Auto camera link reconnects by itself instead of
-freezing on the last frame. On iPhone, the blade safety gate now also rides on video the Toolkit
-itself delivers, which should end spurious "camera required" blade stops during brief buffering.
+Pressing ✕ Exit bounced you straight back into fullscreen: leaving fullscreen triggers the same
+checks that rotation does, and with the phone still sideways they immediately re-entered. An
+explicit Exit now stays out until you rotate to portrait and back, or tap ⛶ yourself. The camera
+still opens in fullscreen the way it always has — Exit is simply respected now.
+
+## One clean ⛶ everywhere
+
+Fullscreen buttons showed spelled-out labels, and the camera view could show two different
+fullscreen buttons at once — one of them sitting on top of the Auto/WiFi/4G selector. Every
+fullscreen control is now the bare ⛶ symbol, the return-to-fullscreen button sits centered on the
+picture where nothing else lives, and only one fullscreen control is ever visible at a time.
