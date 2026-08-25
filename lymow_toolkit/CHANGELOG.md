@@ -1,32 +1,27 @@
-Lymow Toolkit v1.51.3
+Lymow Toolkit v1.51.4
 
-Everything below is a change from v1.51.2.
-
-
-- The camera's ⛶ fullscreen button now works on computers: on a desktop browser it was hidden underneath the camera-link (Auto/WiFi/4G) buttons, so there was no visible way into fullscreen without rotating a phone.
-- Exiting fullscreen now sticks: pressing ✕ Exit used to throw you straight back into fullscreen — it now stays out until you rotate the phone again or tap ⛶ yourself.
-- Every fullscreen button is now the simple ⛶ symbol, and the return-to-fullscreen button sits centered on the picture — it no longer covers the camera-link buttons.
+Everything below is a change from v1.51.3.
 
 
-## Fullscreen works on computers again
+- The live camera on Windows should no longer turn green: over a plain http:// address the WiFi picture was handed to a Windows decoder that corrupts this stream — the camera now switches to 4G with the reason shown, or explains how to get the WiFi picture.
+- The live picture should no longer shrink into the right edge of the screen: when the direct WiFi link failed, the fallback left debris on screen that squeezed the picture into a small box beside a black area.
 
-On a desktop browser, the remote camera's ⛶ fullscreen button has been hidden underneath the
-camera-link (Auto/WiFi/4G) buttons since v1.47 — phones could still enter fullscreen by rotating,
-but on a computer there was no visible way in at all. The camera-link buttons now appear only in
-fullscreen (where they belong), and the ⛶ underneath is visible and clickable again. Verified by
-an automated screen-layout sweep across desktop and phone, camera view and remote, windowed and
-fullscreen: no control covers another anywhere.
 
-## Exiting fullscreen sticks
+## No more green picture on Windows
 
-Pressing ✕ Exit bounced you straight back into fullscreen: leaving fullscreen triggers the same
-checks that rotation does, and with the phone still sideways they immediately re-entered. An
-explicit Exit now stays out until you rotate to portrait and back, or tap ⛶ yourself. The camera
-still opens in fullscreen the way it always has — Exit is simply respected now.
+Viewing the Toolkit from a Windows browser over a plain `http://` network address (for example
+`http://192.168.x.x:8787` from another computer), the WiFi camera picture could arrive solid green
+with blocky noise. On that kind of page the browser cannot use the Toolkit's software video
+decoder, and the remaining playback path hands the stream to a Windows hardware decoder that is
+known to corrupt it. The Toolkit no longer shows that broken picture: on the Auto camera link it
+switches to 4G and says why on screen, and on WiFi-only it explains the two ways to get the WiFi
+picture — open the Toolkit on the machine it runs on (localhost), or use the secure remote link.
+Phones, Macs, and Linux browsers are unaffected.
 
-## One clean ⛶ everywhere
+## The picture no longer shrinks into a corner
 
-Fullscreen buttons showed spelled-out labels, and the camera view could show two different
-fullscreen buttons at once — one of them sitting on top of the Auto/WiFi/4G selector. Every
-fullscreen control is now the bare ⛶ symbol, the return-to-fullscreen button sits centered on the
-picture where nothing else lives, and only one fullscreen control is ever visible at a time.
+When the direct WiFi camera link failed and the camera fell back to streaming through the Toolkit,
+the failed attempt's video surface was left on screen. The live picture then appeared squeezed
+into a small box against the right edge, next to a black area. The fallback now removes the failed
+surface before showing the live one, on both the Remote tab and the Overview camera popup, on
+every platform.
