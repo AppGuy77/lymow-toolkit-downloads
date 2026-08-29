@@ -1,37 +1,49 @@
-Lymow Toolkit v1.51.6
+Lymow Toolkit v1.51.7
 
-Everything below is a change from v1.51.5.
-
-
-- Multi-pass should now survive a recharge on big zones: a mid-pass recharge dock was read as "pass finished", so the next pass was sent to a dead battery and the run quietly ended after one pass.
-- The recharge decision now uses YOUR return-to-dock level (Auto-recharge setting), not a fixed 20%.
-- The dashboard and event log now say what a multi-pass run is doing at a recharge: "Pass 1 of 2 on hold — recharging".
+Everything below is a change from v1.51.6.
 
 
-## Multi-pass on zones bigger than one charge
+- Zones with their own stripe angle should now all mow at that angle: several custom zones saved or mowed together kept only the last zone's settings — the rest fell back to the global.
+- Saving global settings now asks whether custom zones keep their settings or are overridden; Override deletes them on the mower and shows what the mower kept.
+- The Toolkit and the official app now share one set of settings — a global saved in either shows up in the other.
+- Resume should now be offered after a mid-mow power cycle (battery swap), the way the official app does.
 
-On a zone that needs more than one battery charge per pass, the mower docks mid-pass to recharge —
-normal behavior. The Toolkit misread that dock as the pass being finished and dispatched the next
-pass within seconds, while the battery was empty. The low-battery protection canceled that start,
-the mower later recharged and finished the interrupted pass on its own, and the multi-pass run
-quietly ended after a single pass (field report, 2026-08-25 — thank you for the detailed logs).
 
-The Toolkit now reads the mower's own job state, which distinguishes "docked to recharge, job
-still open" from "job finished". A recharge dock holds the current pass: the mower charges,
-resumes, and finishes it, and the next pass is sent only when the pass genuinely ends. If
-Auto-recharge & resume is turned off on the mower, the run waits and the dashboard says so
-instead of pretending the pass completed.
+## Custom zone angles that actually held
 
-## Your recharge level, not ours
+Field report (2026-08-28): global angle 36°, three zones set to their own angle (two fixed, one
+Optimized), all mowed in one run — one zone mowed its angle, the other two mowed the global with
+"a million turns". Cause: the Toolkit wrote the zones' settings to the mower one zone at a time,
+and each write also carried the other zones as the Toolkit last saw them, so every write undid the
+one before it. Only the last zone written kept its settings. All zones now go to the mower in a
+single write, and the event log records what each zone was given.
 
-Whether a trip home is a real recharge or just the end of a pass is now judged against the
-return-to-dock battery level you actually set (Auto-recharge in the Toolkit, or the official
-app — default 20%), instead of a hardcoded 20%. If you raised your return level, a dock at a
-higher battery percentage is now correctly treated as a recharge.
+## Keep custom or override
 
-## You can see what it is doing
+Saving global settings while some zones have custom settings now asks what to do — the same choice
+the official app offers. **Keep custom:** each zone keeps only the values it customized; every other
+setting on every zone follows the new global. **Override zones:** the zones' custom settings are
+deleted on the mower so all zones use the global, and a result box shows what the mower actually
+kept (cleared zones, or any zone that kept settings). Previously the Toolkit had no choice here,
+and its override copied the global onto every zone, which made every setting look custom.
 
-During a mid-pass recharge the Overview shows "Multi-pass · Pass 1 of 2 on hold — recharging,
-resumes after charging". The event log records each boundary decision: when a pass is held
-because the mower's job is still open, and when a pass genuinely completes and the next one is
-sent. If a multi-pass run ever surprises you, the event log now tells the story.
+The saving rule itself has not changed and is now stated in the panel: nothing selected = global
+for all zones; zones selected = only the values that differ from the global become that zone's
+custom settings, and everything else keeps following the global.
+
+## One set of settings, shared with the official app
+
+Both apps read and write the same settings on the mower — the global config and each zone's own
+config — and the last save wins, per zone. Until now a global cut height, mowing speed, blade speed
+or stripe angle saved in the Toolkit stayed in the Toolkit: the official app kept showing the old
+global, and mows started from the app or from the mower's own schedule used it. Those now reach the
+mower's global config. In the other direction, a global changed in the official app is picked up by
+the Toolkit the next time the mower sends its map, and the event log notes it.
+
+## Resume after a power cycle
+
+Swapping the battery in the yard restarts the mower with its job still open. The official app
+offers Resume; the Toolkit offered only Start mow, which begins the job over. The Toolkit now shows
+▶ Resume (on the main button and the Mow-on-hold card) and continues the mow. This one is built
+from the report rather than a capture of the swap, so if Resume does not appear after your next
+swap, please send the event log.
