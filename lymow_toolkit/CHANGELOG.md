@@ -1,35 +1,22 @@
-Lymow Toolkit v1.52.0
+Lymow Toolkit v1.52.1
 
-Everything below is a change from v1.51.7.
-
-
-- The Toolkit in your language: 17 languages, chosen on the sign-in screen or under Settings → Language, saved on the server so every device shows the same one.
-- The whole user wiki is translated into those languages too, linked from the 📚 button.
-- New features and pages will be translated into every supported language as they ship, so the app and wiki stay in your language on future updates.
-- Translations were produced with AI and are being reviewed by the community — Settings → Language → Suggest a better wording opens a prefilled report.
+Everything below is a change from v1.52.0.
 
 
-## The Toolkit in your language
+- Home Assistant fix: if your machine's clock had drifted from the real time, the mower could sign in and then immediately show offline. The Toolkit now corrects for a wrong device clock when it connects, so this should no longer happen. If this was affecting you, please let me know the update clears it — and it is still worth checking your machine's time sync.
 
-Settings → **Language** (and the same selector on the sign-in screen) offers English (US), English
-(UK), Dutch, German, French, Spanish, Danish, Finnish, Swedish, Czech, Slovak, Hungarian, Estonian,
-Latvian, Lithuanian, Italian and Portuguese. Every tab, help hover, message, fault explanation and
-wiki link follows the choice, and dates and times are written the way the language writes them.
-The first time the Toolkit opens it uses the browser's language when that is one of the 17.
 
-The choice is saved on the server, so it is the standard for the whole installation: every browser,
-phone and Home Assistant panel that opens the Toolkit shows the same language. Changing it reloads
-the page. Mower names, zone names and anything you typed are never translated.
+## Home Assistant connection fix (time sync)
 
-## The wiki in your language
+Some Home Assistant users saw the mower connect and then immediately drop to **offline**, and
+signing out and back in did not help. The cause was the machine's **clock**: the cloud connection
+is time-stamped, and if the Home Assistant machine's time had drifted far enough from the real
+time, the cloud rejected the connection even though the sign-in itself worked.
 
-The 📚 button opens the wiki in the chosen language, and every page carries a language bar at the
-top. The entire user wiki is translated; the change log, feature guide and release notes stay in
-English. Going forward, new features and new wiki pages are translated into every supported language
-as part of each release, so the app and its help stay in your language when you update.
+The Toolkit now measures how far the machine's clock is off and **corrects for it** when it
+connects, so a wrong clock should no longer knock the mower offline. If your machine's time is off
+by more than a couple of minutes, the add-on log now says so — the connection works either way, but
+the real fix is to get the machine's time sync (NTP) working.
 
-## Help improve a translation
-
-The translations were produced with AI from the English source and are being reviewed by owners in
-the community. If a phrase reads wrong, Settings → Language → **Suggest a better wording** opens a
-prefilled report with the text in question.
+**Please help me confirm this.** I could not reproduce it on my own machine, so if you were
+seeing the mower go offline on Home Assistant, let me know whether this update clears it for you.
