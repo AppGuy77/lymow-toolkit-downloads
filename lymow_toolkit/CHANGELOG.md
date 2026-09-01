@@ -1,22 +1,32 @@
-Lymow Toolkit v1.52.1
+Lymow Toolkit v1.53.0
 
-Everything below is a change from v1.52.0.
-
-
-- Home Assistant fix: if your machine's clock had drifted from the real time, the mower could sign in and then immediately show offline. The Toolkit now corrects for a wrong device clock when it connects, so this should no longer happen. If this was affecting you, please let me know the update clears it — and it is still worth checking your machine's time sync.
+Everything below is a change from v1.52.1.
 
 
-## Home Assistant connection fix (time sync)
+- Control the mower from the camera: Resume, Pause, Dock, Clear Fault and Cancel are now on the camera view — the Remote camera and the pop-up camera on the Overview page, in fullscreen too — so you can clear a fault or dock without leaving the picture.
+- Remote control clears a fault for you: opening the camera to drive by hand clears a fault that had stopped the mower, so it moves as soon as you steer.
+- Zone numbers stay inside their zones: on angled or curved zones the mow-order number could land in the wrong zone; it is now placed inside the part of the zone you can see, at any zoom.
 
-Some Home Assistant users saw the mower connect and then immediately drop to **offline**, and
-signing out and back in did not help. The cause was the machine's **clock**: the cloud connection
-is time-stamped, and if the Home Assistant machine's time had drifted far enough from the real
-time, the cloud rejected the connection even though the sign-in itself worked.
 
-The Toolkit now measures how far the machine's clock is off and **corrects for it** when it
-connects, so a wrong clock should no longer knock the mower offline. If your machine's time is off
-by more than a couple of minutes, the add-on log now says so — the connection works either way, but
-the real fix is to get the machine's time sync (NTP) working.
+## Control the mower from the camera
 
-**Please help me confirm this.** I could not reproduce it on my own machine, so if you were
-seeing the mower go offline on Home Assistant, let me know whether this update clears it for you.
+The camera used to be view-only, so if the mower stopped while you were watching, you had to close
+the camera to do anything about it. Now the **Resume / Pause**, **Dock** and **Cancel Task** buttons
+sit right on the picture — on the Remote camera and on the pop-up camera you open from the Overview
+map, in fullscreen as well. When the mower has stopped on a fault (for example out-of-bounds), a
+banner tells you why, and the Dock button becomes **⚠ Clear Fault** so you can clear it and carry on
+without ever leaving the video.
+
+## Remote control clears a fault for you
+
+A mower stopped on an error will not move when you push the joystick until the error is cleared — and
+there was nothing on the fullscreen picture to tell you that. Now, when you open the camera to drive
+the mower by hand, any fault that was stopping it is cleared automatically, so it moves the moment you
+steer. You still get a message saying it happened.
+
+## Zone numbers stay inside their zones
+
+On zones that run at an angle or curve across the yard, the little mow-order number could be drawn
+outside the zone and end up sitting on the neighboring one. The number is now placed inside the part
+of the zone that is actually on screen, and it follows as you zoom and pan, so it always marks the
+right zone.
