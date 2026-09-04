@@ -1,7 +1,7 @@
 # Lymow Toolkit — Home Assistant add-on manifest. The version placeholder is stamped by
 # tools/make_ha_addon.sh from the repo VERSION file, so the add-on tracks the toolkit release.
 name: Lymow Toolkit
-version: "1.54.2"
+version: "1.55.0"
 slug: lymow_toolkit
 description: Local companion dashboard for the Lymow One robotic mower
 url: https://github.com/AppGuy77/lymow-toolkit-downloads
@@ -25,6 +25,11 @@ boot: auto
 # is reachable from phones/PCs out of the box — the reliable setup on a Pi/NUC, where the bridge network
 # can fail to forward published ports to the LAN (the "works on localhost, refused from the LAN" symptom).
 host_network: true
+# homeassistant_api: lets the add-on call Home Assistant's own API through the Supervisor
+# (http://supervisor/core/api) with the Supervisor token — this is how push notifications reach the
+# phones registered in Home Assistant WITHOUT the user pasting a long-lived token (v1.55.0,
+# core/hanotify.py). Read/write of services only; no admin scope is requested.
+homeassistant_api: true
 # INGRESS — a sidebar panel, Home Assistant's own login, and it works through Nabu Casa remote
 # access. ADDITIVE: host_network and the published port below stay exactly as they were, because
 # ingress cannot serve the two things that need a direct URL — the MJPEG address Home Assistant's
