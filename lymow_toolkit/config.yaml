@@ -1,8 +1,30 @@
 # Lymow Toolkit — Home Assistant add-on manifest. The version placeholder is stamped by
 # tools/make_ha_addon.sh from the repo VERSION file, so the add-on tracks the toolkit release.
 name: Lymow Toolkit
-version: "1.56.1"
+version: "1.56.2"
 slug: lymow_toolkit
+# PULL, NEVER BUILD (v1.56.2). With `image:` set, Supervisor pulls this prebuilt multi-arch image for the
+# box's own architecture and, on every update, deletes the previous version's image. Without it the
+# add-on was BUILT on the user's machine from a Dockerfile whose FROM pulled the very same image under
+# another name — one Supervisor never cleans up (its cleanup lists images by the add-on's own name
+# only). One ~0.5 GB image per version was left behind, release after release, until the Home Assistant
+# disk fell below Supervisor's 2 GB floor: the store stopped updating, the recorder database failed with
+# "disk I/O error", and the data disk was finally remounted read-only (owner, 2026-09-06/07). The image
+# tag Supervisor pulls is this file's version, which is exactly the tag CI publishes.
+# tools/make_ha_addon.sh stamps the image here and DROPS this line for the --local test add-on, which
+# must build from its bundled payload.
+image: "ghcr.io/appguy77/lymow-toolkit"
+# What the add-on Dockerfile used to set: Supervisor applies these to the pulled image's container.
+# LYMOW_DATA is Home Assistant's persistent add-on volume; LYMOW_KEY_DIR is the add-on's OWN config
+# volume (map: addon_config -> /config), never /data — 'Stay signed in' keeps its unlock key there and
+# the encrypted record in /data, so a copied data folder or a partial backup carries one half, never both.
+environment:
+  LYMOW_HOST: "0.0.0.0"
+  LYMOW_PORT: "8787"
+  LYMOW_RELOAD: "0"
+  PYTHONUNBUFFERED: "1"
+  LYMOW_DATA: /data
+  LYMOW_KEY_DIR: /config/.lymow-key
 description: Local companion dashboard for the Lymow One robotic mower
 url: https://github.com/AppGuy77/lymow-toolkit-downloads
 # armv7 IS SUPPORTED ON PURPOSE — DO NOT REMOVE IT.
