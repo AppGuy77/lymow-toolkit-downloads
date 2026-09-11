@@ -1,35 +1,43 @@
-Lymow Toolkit v1.56.4
+Lymow Toolkit v1.57.0
 
-Everything below is a change from v1.56.3.
-
-
-- Fixed: the mower should no longer pause itself for no clear reason while mowing. When it bumps something and backs up to work itself free (its "stuck — escaping" move), the Toolkit now gives it 30 seconds to get out on its own before pausing, the way the official app does. Before, it could pause the instant that move started and leave the mower parked with no fault shown and no notification from the Lymow app — most often where the RTK signal is weak. A mower still stuck after that is paused as before.
-- Fixed: leaving remote control no longer pauses a mow that was never under remote control.
-- New: the event log now names what paused the mower — the reason for each pause the Toolkit sends, or plainly that it was not the Toolkit — and names who sent every command.
+Everything below is a change from v1.56.4.
 
 
-## Random pauses while mowing
+- New: automatic cut-angle rotation. The new "Adjust cut angle offset" option — on the map, next to Multi-pass — turns the cut angle by an amount you choose after every completed mow, so the mower never lays the same stripes twice. Every zone turns from its own angle, including zones set to Optimized; the event log shows the exact angle used each mow.
+- New: a scheduled mow's "Rotate the cut angle each run" can now be set to any amount from 1 to 179 degrees, instead of the old fixed 30.
+- Removed "Download all to this PC" (a map downloaded to a PC cannot be restored to a mower) and the "Merge zones — coming soon" placeholder.
 
-"Stuck — escaping" is the mower's own move: it has bumped something, and it backs up, turns and tries
-again, usually freeing itself within seconds. The Toolkit used to pause it the instant that move began.
-With auto-resume off, or the "stuck" fault excluded, the mower then sat paused with no fault code and no
-notification from the Lymow app until someone pressed Resume — "random pauses", worse where the RTK
-signal is weak and the mower veers and slips more.
 
-The Toolkit now gives the mower 30 seconds to work itself free before the resistance rule pauses it, the
-way the official app does. A mower that is still stuck after that, or one reporting a real stuck or jam
-code, is paused at once as before. The event log records each move: "working itself free", then either
-the mower freeing itself or the pause.
+## Automatic cut-angle rotation
 
-A second cause is fixed too: leaving remote control paused a mow even when the mower had never been under
-remote control — a step that only meant to make sure it was out of remote mode. It now pauses only a
-mower that was actually in remote control. Stopping the blades from the camera view still pauses, as before.
+Mowing the same direction every time wears the grass into the same lines and can leave wheel ruts. The new
+**Adjust cut angle offset** option — a checkbox on the map, next to Multi-pass — turns the cut angle by a
+set amount after every completed mow, so the finish evens out over time.
 
-## The event log now says what paused the mower
+Turn it on and pick how many degrees to turn each mow. After that:
 
-A "Mowing paused" line used to name nobody, and the Toolkit's own pauses left no record of which part of
-it sent them — so a "random pauses" report could not be answered from the log. Now every pause the Toolkit
-sends is labeled with its reason (the resistance rule, a fault, the RTK or link guard, auto-resume, low
-battery, or leaving remote control), and a pause with none of those behind it says plainly it was not the
-Toolkit: the official app, Home Assistant, or a second Toolkit on the same account. Every command in the
-log also names who sent it.
+- The first mow of a zone cuts at its normal angle — its fixed angle, or, for a zone set to Optimized, the
+  direction the Toolkit works out the mower would choose.
+- Every mow after turns that many degrees further round, wrapping back around at 180.
+- Every zone turns from its own angle. Zones set to Chess Board or Adaptive Zigzag are left alone — those
+  patterns choose their own direction and cannot take a fixed angle.
+- Change a zone's or the global cut angle and the next mow starts fresh from that new angle.
+- A Reset button returns every zone to its starting angle.
+
+The event log names the exact angle each mow ("Cut angle offset → Front Yard: 168° this mow"), so you can
+see it change. It runs instead of a Multi-pass catch-up, not alongside it.
+
+## The scheduled-mow angle rotation is adjustable
+
+A scheduled mow could already turn its cut angle a little on alternating runs so a repeating schedule did
+not cut the identical pattern twice. That turn was fixed at 30 degrees; you can now set it to any amount
+from 1 to 179.
+
+## Removed two controls that could not work
+
+**Download all to this PC** downloaded a mower's maps to your computer, but a map file on a PC cannot be put
+back on a mower — there is no way to restore one — so the download served no purpose. It has been removed.
+To back up and restore a map, use the restore points, which save to and restore from the cloud.
+
+The **Merge zones — coming soon** placeholder has also been removed. Merging existing zones into one works
+in the official app but needs Bluetooth, which the Toolkit cannot do, so it was never going to arrive.
