@@ -1,29 +1,36 @@
-Lymow Toolkit v1.59.3
+Lymow Toolkit v1.59.4
 
-Everything below is a change from v1.59.2.
-
-
-- **Your away address can no longer change with how you sign in.** v1.59.2 could switch a Toolkit to a duplicate mower-xxxx address issued to a second sign-in identity of the same Lymow account (email+password, Google and Apple count as separate identities in Lymow's cloud). The link service now recognizes the account by its verified email and always returns its original address; a Toolkit that was switched returns to the original on its next start.
+Everything below is a change from v1.59.3.
 
 
-## Your away address can no longer change with how you sign in
+- **"Address in use by another Toolkit" with only one Toolkit — fixed.** After an update, the away link opened by the previous version could stay running on the computer and keep your mower-xxxx address, so the new version was refused its own address and blamed a second Toolkit that did not exist, while the address itself kept working. The Toolkit now closes its away link before restarting for an update, takes the address back from any leftover copy on the same computer, and the relay hands an address to a newer connection from the same Toolkit.
 
-Lymow's cloud treats email+password, Google and Apple sign-ins to the same account as separate
-identities, and the link service issued each identity its own mower-xxxx address. A Toolkit kept the address
-it had saved for as long as it never asked the link service again, which is why a saved address carried
-over through every update until now.
 
-v1.59.2 added a re-registration that asks the link service again. On a Home Assistant add-on signed in
-through a different method than the one its saved address was issued to, that request came back with the
-other identity's address and the Toolkit adopted it. That was wrong, and this release fixes both sides:
+## "Address in use by another Toolkit" with only one Toolkit
 
-- **The link service** recognizes an account by its verified email. All identities of the same account
-  resolve to the account's original address, the one issued first, and no second address is ever issued
-  for the same email.
-- **The Toolkit** tells the link service which address it holds and refuses any change the service does not
-  explain. The one accepted change is the return from a duplicate to the account's original address, which
-  is logged in plain words. Every install checks its address once per start, so a Toolkit that was switched
-  to a duplicate by v1.59.2 returns to the original address on its first start after this update.
+The Toolkit restarts for an update with a hard exit, which skipped the step that closes the away link.
+On computers whose service manager leaves child processes running (macOS, and any Toolkit started by hand),
+the previous version's link kept running, kept holding your mower-xxxx address at the relay, and kept
+forwarding it into the new version's port. The address worked; the new version's own link was refused
+every time, and the mark beside the Away access switch read **Address in use by another Toolkit on this
+account** with only one Toolkit installed.
 
-Your saved phone link stays what it was. If a Toolkit shows a different mower-xxxx address than the one you
-saved, update it and restart it once.
+This release fixes it in three places:
+
+- **The Toolkit closes its away link before every restart** — for an update, for the Shut down button and
+  for the automatic restart after a version change.
+- **The Toolkit takes its address back.** At start, and whenever the relay reports the address as held,
+  it looks for a leftover link of this same install on this computer and closes it, and it checks who is
+  actually answering at the address before it says anything.
+- **The relay hands an address to a newer connection from the same Toolkit.** A connection with the same
+  device key that already holds the address replaces the older session. A different Toolkit on the same
+  account is still refused, which is the only case that is really "another Toolkit".
+
+The mark beside the Away access switch now tells the three cases apart: **Address in use by another
+Toolkit on this account** only when a second Toolkit actually answered at your address; **Taking the
+address back from an old copy of this Toolkit** for a few seconds while a leftover is being reclaimed; and
+**The relay refused this address — re-registering** when nobody is behind the address and the relay does
+not yet know this Toolkit's key for it, which re-registers by itself.
+
+Update from inside the Toolkit, or from the downloads page. Home Assistant: Update on the add-on page.
+Docker: pull the image again.
