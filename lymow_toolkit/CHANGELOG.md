@@ -1,20 +1,24 @@
-Lymow Toolkit v1.58.3
+Lymow Toolkit v1.59.0
 
-Everything below is a change from v1.58.2.
-
-
-- **Every slider now has − and + buttons.** A minus on the left and a plus on the right of each slider — on every page and in every pop-up — so you can nudge a setting one step at a time (tap once, or press and hold to run) instead of trying to land the exact value by dragging. On a phone the −, slider, + and the value all stay on one line.
+Everything below is a change from v1.58.3.
 
 
-## − and + buttons on every slider
+- **Sign in with Apple.** A new **Sign in with Apple** button on the sign-in screen, next to Sign in with Google, for everyone whose Lymow app account is an Apple Account. Works on Windows, macOS, Ubuntu, Docker and the Home Assistant add-on, and from a phone or another PC, and finishes on its own.
 
-Every slider in the Toolkit — cut height, speeds, spacing, thresholds, everywhere, on every page and in every
-pop-up — now has a − button on its left and a + button on its right. Tap either one to step the value by a
-single notch, or press and hold to run it up or down. It is the same value you were dragging before, just far
-easier to dial in exactly. On a phone the −, the slider, the + and the value all stay on one line.
 
-## Cross-cut paint controls tidied up
+## Sign in with Apple
 
-The cross-cut paint color and its transparency slider now appear only once you turn on a cross-cut pass — so
-they no longer sit on the panel as a stray, unlabeled slider — and the transparency slider is clearly labeled
-"Paint opacity" with a live percentage.
+The sign-in screen now has a **Sign in with Apple** button beside Sign in with Google. It signs in with the
+Apple Account you use in the official Lymow app and works everywhere Google sign-in works: Windows, macOS,
+Ubuntu, Docker and the Home Assistant add-on, and from a phone or another computer.
+
+Apple asks for your Apple Account email and password, then the 6-digit code it shows on your iPhone, iPad
+or Mac. At the computer that runs the Toolkit, Apple's own **Sign in with iPhone** option is offered as well.
+From a phone, another computer, Docker or Home Assistant the sign-in page runs on the Toolkit machine and
+is shown inside the dashboard, so there you sign in with email + password + code. Like Google accounts,
+Apple accounts cannot use Stay signed in and ask again about once a month.
+
+## Cancel sign-in really cancels
+
+Pressing **✕ Cancel sign-in** on the in-dashboard sign-in window should now close it for good, instead of
+the window reopening by itself a moment later.
