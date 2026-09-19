@@ -1,36 +1,30 @@
-Lymow Toolkit v1.59.4
+Lymow Toolkit v1.59.5
 
-Everything below is a change from v1.59.3.
-
-
-- **"Address in use by another Toolkit" with only one Toolkit — fixed.** After an update, the away link opened by the previous version could stay running on the computer and keep your mower-xxxx address, so the new version was refused its own address and blamed a second Toolkit that did not exist, while the address itself kept working. The Toolkit now closes its away link before restarting for an update, takes the address back from any leftover copy on the same computer, and the relay hands an address to a newer connection from the same Toolkit.
+Everything below is a change from v1.59.4.
 
 
-## "Address in use by another Toolkit" with only one Toolkit
+- **The Street map background works again.** OpenStreetMap's volunteer-run tile servers now refuse apps like the Toolkit, so with Satellite off the map showed an "Access blocked" tile instead of your streets. The Street map is now drawn from Esri's World Street Map, updated monthly, with road names and building outlines sharp at lawn zoom. The hybrid view with Satellite on is unchanged.
+- **The add-to-home-screen banner on phones is gone.** The floating buttons already give one-tap access, and on iPhone the banner could only show instructions. Adding the Toolkit to your home screen is still offered from the phone QR window.
 
-The Toolkit restarts for an update with a hard exit, which skipped the step that closes the away link.
-On computers whose service manager leaves child processes running (macOS, and any Toolkit started by hand),
-the previous version's link kept running, kept holding your mower-xxxx address at the relay, and kept
-forwarding it into the new version's port. The address worked; the new version's own link was refused
-every time, and the mark beside the Away access switch read **Address in use by another Toolkit on this
-account** with only one Toolkit installed.
 
-This release fixes it in three places:
+## Street map background
 
-- **The Toolkit closes its away link before every restart** — for an update, for the Shut down button and
-  for the automatic restart after a version change.
-- **The Toolkit takes its address back.** At start, and whenever the relay reports the address as held,
-  it looks for a leftover link of this same install on this computer and closes it, and it checks who is
-  actually answering at the address before it says anything.
-- **The relay hands an address to a newer connection from the same Toolkit.** A connection with the same
-  device key that already holds the address replaces the older session. A different Toolkit on the same
-  account is still refused, which is the only case that is really "another Toolkit".
+OpenStreetMap's tile servers are run by volunteers, and their usage policy does not allow an app that is
+installed on thousands of computers to load map tiles from them. They began answering the Toolkit with an
+"Access blocked" picture in place of every tile, so with **Satellite** off the map lost its streets.
 
-The mark beside the Away access switch now tells the three cases apart: **Address in use by another
-Toolkit on this account** only when a second Toolkit actually answered at your address; **Taking the
-address back from an old copy of this Toolkit** for a few seconds while a leftover is being reclaimed; and
-**The relay refused this address — re-registering** when nobody is behind the address and the relay does
-not yet know this Toolkit's key for it, which re-registers by itself.
+The Street map background now comes from Esri's World Street Map, the same company whose satellite photos the
+Toolkit already uses by default. It is updated monthly and drawn as vector data, so road names and building
+outlines stay sharp at the zoom you use to look at a lawn. Nothing to set up: turn **Street map** on as before.
 
-Update from inside the Toolkit, or from the downloads page. Home Assistant: Update on the add-on page.
-Docker: pull the image again.
+- The hybrid view — **Satellite** and **Street map** both on — is unchanged.
+- The street map needs the internet and a browser with WebGL, which every current phone and desktop browser
+  has. If a browser has none, the map says so and shows your zones on a plain background instead of a blank map.
+- The imagery alignment you saved for the old street map is kept but not applied to the new one, because the two
+  are positioned differently. Unlock, drag and lock once more if the new street map needs nudging.
+
+## Phone banner removed
+
+The bar at the bottom of the screen on phones that offered to add the Toolkit to your home screen is gone. The
+floating buttons already give one-tap access to the mower, and on iPhone the bar could only show instructions.
+The phone QR window still has the **Add to Home Screen** button for anyone who wants the icon.
