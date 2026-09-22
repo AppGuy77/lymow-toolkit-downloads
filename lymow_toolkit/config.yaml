@@ -1,18 +1,17 @@
 # Lymow Toolkit — Home Assistant add-on manifest. The version placeholder is stamped by
 # tools/make_ha_addon.sh from the repo VERSION file, so the add-on tracks the toolkit release.
 name: Lymow Toolkit
-version: "1.60.1"
+version: "2.7.0"
 slug: lymow_toolkit
-# PULL, NEVER BUILD (v1.56.2). With `image:` set, Supervisor pulls this prebuilt multi-arch image for the
+# PULL, NEVER BUILD (v2.1.7). With `image:` set, Supervisor pulls this prebuilt multi-arch image for the
 # box's own architecture and, on every update, deletes the previous version's image. Without it the
 # add-on was BUILT on the user's machine from a Dockerfile whose FROM pulled the very same image under
 # another name — one Supervisor never cleans up (its cleanup lists images by the add-on's own name
-# only). One ~0.5 GB image per version was left behind, release after release, until the Home Assistant
-# disk fell below Supervisor's 2 GB floor: the store stopped updating, the recorder database failed with
-# "disk I/O error", and the data disk was finally remounted read-only (owner, 2026-09-06/07). The image
-# tag Supervisor pulls is this file's version, which is exactly the tag CI publishes.
-# tools/make_ha_addon.sh stamps the image here and DROPS this line for the --local test add-on, which
-# must build from its bundled payload.
+# only). One ~0.5 GB image per version was left behind; six betas in three days filled a Home
+# Assistant disk below Supervisor's 2 GB floor, the store stopped updating and the recorder database
+# failed with "disk I/O error" (owner, 2026-09-06). The image tag Supervisor pulls is this file's
+# version, which is exactly the tag CI publishes. tools/make_ha_addon.sh stamps the channel's image
+# here and DROPS this line for the --local test add-on, which must build from its bundled payload.
 image: "ghcr.io/appguy77/lymow-toolkit"
 # What the add-on Dockerfile used to set: Supervisor applies these to the pulled image's container.
 # LYMOW_DATA is Home Assistant's persistent add-on volume; LYMOW_KEY_DIR is the add-on's OWN config
@@ -47,11 +46,14 @@ boot: auto
 # is reachable from phones/PCs out of the box — the reliable setup on a Pi/NUC, where the bridge network
 # can fail to forward published ports to the LAN (the "works on localhost, refused from the LAN" symptom).
 host_network: true
-# homeassistant_api: lets the add-on call Home Assistant's own API through the Supervisor
-# (http://supervisor/core/api) with the Supervisor token — this is how push notifications reach the
-# phones registered in Home Assistant WITHOUT the user pasting a long-lived token (v1.55.0,
-# core/hanotify.py). Read/write of services only; no admin scope is requested.
-homeassistant_api: true
+# services (v1.60.2): the Supervisor hands this add-on the Mosquitto add-on's own login
+# (GET http://supervisor/services/mqtt: host, port, username, password) the moment that add-on runs,
+# so the Home Assistant device configures ITSELF — no broker address, no password, no pasted token
+# (core/supervisor.py mqtt_service, app/server.py _ha_autoconfig). `want`, not `need`: the Toolkit
+# starts without a broker and simply waits for one. No manager role is requested (owner decision):
+# installing Mosquitto stays the user's one click in the add-on store.
+services:
+  - mqtt:want
 # INGRESS — a sidebar panel, Home Assistant's own login, and it works through Nabu Casa remote
 # access. ADDITIVE: host_network and the published port below stay exactly as they were, because
 # ingress cannot serve the two things that need a direct URL — the MJPEG address Home Assistant's
@@ -68,6 +70,10 @@ ingress_port: 8787
 # the camera failed while 4G (a separate WebSocket path) worked, pages took minutes, and the
 # sign-in socket was dropped mid-flow.
 ingress_stream: true
+# PHONE NOTIFICATIONS without a pasted token (core/hanotify.py): the add-on may call Home Assistant's
+# own API through the Supervisor proxy (http://supervisor/core/api) with its SUPERVISOR_TOKEN — that
+# is what this grants. A saved long-lived token still wins when the user pasted one.
+homeassistant_api: true
 # THE ONE ENTRY IN THE SIDEBAR. Setup used to add a dashboard per mower with
 # show_in_sidebar:true as well, which predates ingress — a two-mower install then carried the
 # same thing three times. Those dashboards are kept but no longer listed (core/hadash.py
