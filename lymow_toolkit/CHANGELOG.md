@@ -1,25 +1,21 @@
-Lymow Toolkit v2.7.1
+Lymow Toolkit v2.7.2
 
-An update for everyone on v2.7.0. It keeps your sign-in, settings, maps and history — just re-download and install.
-
-
-- **Multiple RTK.** For more than one RTK base station: a new Settings → Multiple RTK page names your bases and assigns each saved map to one. Maps you back up from the Toolkit are filled in for you. Restoring a map now binds the base it belongs to first, so its position and the heat map line up.
-- **Updates is its own tab**, next to Overview, Remote and Settings, so it is easy to find.
-- **The Remote camera on a phone.** Touch the picture to start it, and it fills the screen the right way up. The map thumbnail is smaller, closes with a tap and reopens from the map button. The blade buttons hide while you drive. The connection shows just 🛜 or 4G.
-- **A page reload keeps you on the same tab** instead of jumping back to Overview.
-- **Desktop push notifications.** "Allow desktop browsers" takes effect the moment you turn it on, and a browser that blocks notifications (like Brave) says so with what to do.
+An update for everyone on v2.7.0 or v2.7.1. It keeps your sign-in, settings, maps and history — just re-download and install.
 
 
-## Multiple RTK
+- **Restoring a map is safe again.** A restore no longer changes the mower's RTK base — the v2.7.1 auto-bind could corrupt the map (it stopped showing in the official app and the mower refused zone edits with "cannot find objects"). Restore now touches the map only.
+- **Indicator LEDs.** Settings → Lights can turn the mower's red and green body LEDs — the official app's "Vehicle LED" — on or off, and switch them on during your night-light hours while it mows. It shows what the mower itself reports.
+- **Bind an RTK base on its own.** Multiple RTK now has a Bind button — the way to switch bases now that restore leaves the base alone: bind the correct base first, then restore.
 
-Every saved map is made with one RTK base station, but the mower does not record which one, so the Toolkit could not always bind the right base when you restored a map. Now it can. Settings → Multiple RTK lists your bases (the one the mower reports is already there — give it a name) and lets you assign each saved map to a base. Any map you back up from the Toolkit is stamped with the base it was made on, so it fills in by itself; older maps you set once by hand. On a restore, or at each switch of a multi-map run, the Toolkit binds the map's base before the mower mows. A map with no base assigned keeps the base the mower is on now.
 
-## The Remote camera on a phone
+## Restoring a map no longer touches the RTK base
 
-Starting the camera used to mean scrolling to a button; now you touch the camera picture to start it, and it goes full-screen in landscape by itself. The live-position thumbnail is sized to your screen, closes with a tap and reopens from the map button in the corner, so it never sits over the joystick or the blade buttons. The blade-speed buttons are a tight row under the status bar and fade away while you steer, coming back on a touch. The connection status is short — 🛜 for Wi-Fi, 4G for cellular — instead of a long line that ran off the edge.
+v2.7.1 tried to bind the map's RTK base as part of restoring it. On some mowers that re-initialization corrupted the map: it stopped rendering in the official app and the mower rejected zone changes with "cannot find objects." A restore now writes only the map — it leaves whatever base the mower is on alone — so this can't happen. If you restored a map on v2.7.1 and it broke, restore it again on v2.7.2 and it comes back clean.
 
-## Smaller things
+## Indicator LEDs
 
-- A page reload keeps you on the tab you were on.
-- The desktop "Allow desktop browsers" switch saves the instant you flip it, and the push errors are clearer.
-- One "Show phone QR" button instead of two, and the address on the notifications page is a link.
+The Settings → Night lights section is now just **Lights**, and it can control the mower's red and green body status LEDs — what the official Lymow app calls "Vehicle LED." Turn them on or off, and tick **Include indicator LEDs** to have them come on during your night-light hours while the mower is working. The toggle always shows the state the mower itself reports, and a change here shows in the official app too.
+
+## Multiple RTK — bind is its own step
+
+Because a restore no longer changes the base, switching bases is now a deliberate action: **Multiple RTK → Bind** binds the mower to a base (it re-initializes the mower to re-localize on it). If a saved map belongs to a different base, bind that base first, then restore the map. Single-base yards never need this.
