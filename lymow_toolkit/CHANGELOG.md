@@ -1,48 +1,56 @@
-Lymow Toolkit v2.8.2
+Lymow Toolkit v2.8.3
 
-An update for everyone on v2.8.1. It keeps your sign-in, settings, maps and history — just update.
-
-
-- **An expired Lymow sign-in should show the sign-in screen** instead of leaving the Toolkit on "offline" — at home and through the away link. With **Stay signed in** it signs you back in by itself.
-- **Remote control is safer.** Switching mowers stops the camera and blades first, a page that disappears mid-drive should have its mower stopped within a second, and a mower left in remote control is taken out of it (paused, never canceled).
-- **The Remote says why the joystick did not move the mower**, in the middle of the screen.
+An update for everyone on v2.8.2. It keeps your sign-in, settings, maps and history — just update.
 
 
-## An expired sign-in asks you to sign in again
+- **Remote control should keep up with you.** The delays came from stacked commands and from codec conflicts with iPhone — the joystick and the picture should now respond right away.
+- **Two joysticks on phones and tablets**, and a fullscreen camera that fits every screen — nothing under a phone's camera cutout.
+- **A charging mower can no longer fill the log**, and logs, old Docker images and leftover files are cleaned up.
 
-Lymow's sign-in lasts about a month from the day you signed in, and nothing can extend it. When it ran out, the
-Toolkit could sit on "offline" or "asleep" — or show "could not connect" — instead of asking you to sign in again, and
-it kept asking the Lymow cloud with the finished sign-in. It should now show the sign-in screen, with your email filled
-in and the right sign-in button (email, Google or Apple), and stop asking the cloud until you sign in.
 
-This works through the **away link** too: open your away address, sign in there, and everything carries on at the
-same address. Google and Apple sign-in open inside the page.
+## Remote control keeps up
 
-With **Stay signed in**, the Toolkit should sign you back in by itself whenever the sign-in runs out — not only after a
-restart — and the event log says so ("🔑 Lymow sign-in renewed with your saved password"). If Lymow refuses the saved
-password (it was changed somewhere else), the sign-in screen appears and the old password is forgotten.
+Remote control could fall seconds behind: stacked commands caused increased delays, and codec conflicts with iPhone
+held its picture back. The joystick and the picture should now respond right away — on your home WiFi, on 4G and
+through the away link — and the iPhone gets the live picture.
 
-## Safer remote control
+When the camera picture falls behind anyway (a weak connection), driving and the blades wait until it catches up, and
+the screen says so. You never drive on an old picture.
 
-- **Switching mowers.** Picking another mower while the Remote camera is live should first stop the camera and the
-  blades and take the first mower out of remote control, so the joystick can never drive one mower on another
-  mower's picture.
-- **A page that disappears mid-drive.** If the tab is closed, the phone locks or the network drops while you hold the
-  joystick, the Toolkit should stop the mower itself within a second. The event log says "🛑 Remote control: the mower
-  was stopped — the page driving it went quiet".
-- **Left in remote control.** A mower the Toolkit put in remote control, with the blades off and nobody driving it or
-  watching its camera, is taken out of remote control after about a minute — a running mow is paused, never canceled.
-  Remote control started from the official app is never touched.
-- **Other tabs.** Moving between the other tabs no longer takes a mower out of remote control; leaving the Remote tab
-  still does.
-- **Refusals are said.** When the mower did not move — no live picture, or the cloud link not responding — the reason
-  appears in the middle of the screen, also in fullscreen.
-- **Home Assistant.** Closing the page on the Home Assistant remote card or panel should stop the blades at once, and
-  the remote card shows which mower the camera belongs to and the signal read-out.
-- **Fleet Mode.** The Remote follows its own mower: the deck height set when its camera starts, the Dock choices and
-  "Remember my Remote settings" use the mower you are driving, not the one on the dashboard.
+## Two joysticks on phones and tablets
 
-## Other fixes
+Remote → **Controls**: **Two joysticks** (the default on a touch screen) — the left stick drives forward and back, the
+right stick turns, and holding both drives an arc. **One joystick** is the round stick you know; a computer uses it by
+default. **Controller size** is now saved for each kind of device, so resizing on the phone never changes the computer.
 
-- macOS: the desktop app opens the port your install uses, and the README's links and uninstall steps are correct.
-- Translations: the Home Assistant area is named "Lawn" in every language, matching what Home Assistant shows.
+## Fullscreen camera
+
+- **Phones** should go truly fullscreen (no browser bars) and show the landscape layout even when held upright. ✕ Exit
+  on a phone also turns the camera off.
+- **Computers** should go into real browser fullscreen when you press ⛶, or with your first click when the camera
+  filled the window by itself. Esc leaves fullscreen and stays out.
+- **Nothing in the way.** No button sits in the middle of the picture, and on a phone no control sits under the camera
+  cutout, the rounded corners or the home bar.
+- **Sized to your screen.** The camera screen's buttons and read-outs follow your screen's size.
+
+## The light button tells the truth
+
+When the mower keeps its light off while it is on the dock, or outside its own headlight window, the 💡 shows off — and
+the Toolkit stops re-sending the light.
+
+## Less cloud use
+
+A mower that has gone to sleep should stay asleep: the Toolkit's own background checks no longer wake it. The Toolkit
+also no longer ends a remote-control session that the official app started.
+
+## Logs and disk
+
+- A charging RTK mower with the **Fully charged** notification on could fill the log without end. That should no
+  longer happen, and a log that floods for any reason is now capped.
+- Logs are capped on Windows and in Docker, and Docker removes old images after an update.
+- Updates and uninstalls clean up files left behind by older versions.
+
+## Also
+
+- Error and event-log messages that still showed in English now show in your language.
+- Security patches.
