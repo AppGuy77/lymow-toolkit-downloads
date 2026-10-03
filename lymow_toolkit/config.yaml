@@ -1,7 +1,7 @@
 # Lymow Toolkit — Home Assistant add-on manifest. The version placeholder is stamped by
 # tools/make_ha_addon.sh from the repo VERSION file, so the add-on tracks the toolkit release.
 name: Lymow Toolkit
-version: "2.8.6"
+version: "2.9.0"
 slug: lymow_toolkit
 # PULL, NEVER BUILD (v2.1.7). With `image:` set, Supervisor pulls this prebuilt multi-arch image for the
 # box's own architecture and, on every update, deletes the previous version's image. Without it the
@@ -59,11 +59,13 @@ services:
 # ingress cannot serve the two things that need a direct URL — the MJPEG address Home Assistant's
 # camera integration fetches, and the QR link a phone scans from outside HA.
 #
-# ingress_port is our REAL port, not 0. The docs offer 0 ("for apps that run on the host network,
-# you can use 0 and read the port later via the API") for add-ons that would rather be assigned
-# one; we already have a fixed port on the host network, so Supervisor proxies straight to it.
+# ingress_port 0 (v2.8.7, owner 2026-10-02: "port conflicts deconflict automatically"): the Supervisor assigns the
+# panel a port it has checked is FREE and the add-on reads it from addons/self/info at start (app/run.py
+# _ha_panel_socket), serving the panel on it. It was a fixed 8787 — another app holding 8787 on the host network broke
+# the panel. The LAN / phone address is the page's own port: the first free one of 8787-8799 (core/ports.py), so
+# http://<HA-host-ip>:8787 keeps working wherever 8787 is free.
 ingress: true
-ingress_port: 8787
+ingress_port: 0
 # Supervisor BUFFERS an add-on's responses unless this is set, and the Toolkit's are not all short:
 # the WiFi camera is an endless MJPEG response that never "completes", the sign-in browser is a
 # long-lived stream of frames, and the dashboard's first paint is a burst of requests. Buffered,
