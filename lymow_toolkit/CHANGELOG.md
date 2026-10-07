@@ -1,47 +1,43 @@
-Lymow Toolkit v2.10.3
+Lymow Toolkit v2.10.4
 
-Simpler cutting settings, camera Auto and remote-control fixes for everyone on v2.10.2. It keeps your sign-in, settings, maps, layout and history — just update.
-
-
-- **Cutting settings are simpler:** Save asks Selected zones or All zones; Mow with unsaved changes asks Mow with changes, Mow as saved, or save and mow.
-- **Your settings should stay as you set them:** saving to all zones no longer resets the mow order to Perimeter first, and a scheduled mow puts every setting back.
-- **Camera Auto stays on WiFi through short stutters** — only your Settings → Camera rule switches it to 4G.
-- **Remote control is safer:** a game controller that drops out stops the mower, and a camera restart never keeps it driving.
-- **Only errors pop up in the middle of the screen**, and the Logs tab shows what matters to you.
-- **More of the Toolkit in your language.**
+Processor, remote-control and camera fixes, and security patches, for everyone on v2.10.3. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
-## Cutting settings
+- **No more processor core stuck at 100%** — after a network drop the Toolkit should go back to idle on its own.
+- **The arrow keys only drive:** a focused drop-down, slider or the map no longer takes them, and the camera window now drives its own mower.
+- **A late picture pauses driving on every link** — 4G and WiFi direct too, not only WiFi through the Toolkit.
+- **The camera says why it did not start** and tries the next way at once.
+- **Security patches.**
 
-- **Save** (one button in both panels) asks one thing when zones are selected: **Selected zones** or **All zones**. With nothing selected it saves to all zones. **All zones** gives every zone the settings you changed, including a zone that had its own value for one of them; its other own settings stay.
-- **Mowing with changes you have not saved** asks **Mow with changes** (this mow only), **Mow as saved** (your changes stay unsaved), **Save to selected zones & mow** or **Save to all zones & mow**, and names the zones it will mow. A save never changes which zones are mowed: all zones are mowed only when none is selected. In Fleet Mode, with nothing selected, Mow still asks which mowers first.
-- The old Global / Keep custom / Each zone's own / These Mower settings questions are gone, and Settings → **Send to other mowers** has one button, **Send to all zones**.
-- Saving to all zones should no longer reset the mow order to Perimeter first, nor drop your perimeter laps, perimeter direction and cross-cut angle.
-- A save made while the mower is mowing should no longer be lost; it is written at the next mow.
-- A scheduled mow with its own settings should put every setting back afterwards — perimeter direction, both obstacle settings and settings set to zero used to stay changed.
-- The change lists show the words the controls use (Random, Touch only, Outer discharge).
 
-## Camera
+## Processor and memory
 
-- **Auto** leaves WiFi for 4G only by your Settings → Camera rule, judged over the last 3 seconds, so the WiFi picture's normal stutter no longer switches it. Each switch is in the service log with the reason and the numbers.
-- Switching back to WiFi no longer flashes an old picture.
-- Two screens on one mower: the WiFi picture's automatic upgrade no longer takes the camera from your other screen.
-- iPhone on a plain http:// page: the live 4G picture (Auto) or a reason (WiFi only), instead of a picture running seconds behind.
-- Camera messages (switching links, reconnecting) show on the camera's own status line; only errors pop up in the middle of the screen.
+- One processor core should no longer stay busy at 100% after a network drop. It was seen 1–2 hours after a restart, most often in Docker; the Toolkit should now go back to idle on its own.
+- Long-running installs should stay lighter: queued notifications, the Home Assistant link and mowers you stop watching no longer hold memory, and fewer requests go to the cloud.
+- The + / − controls in the RTK and dock-grace settings no longer re-send an older value when you click elsewhere on the
+  page, and a hidden tab no longer pulls the mowed-area trail every few seconds.
+- A streamed Google sign-in that is left open closes on its own.
 
 ## Remote control
 
-- A game controller that drops out mid-drive stops the mower; it moves again only after the stick returns to center. A pop-up mid-drive stops the mower.
-- A camera restart never keeps the mower driving — a held joystick, arrow key or controller has to be pressed again.
-- A stop the cloud link drops should be sent again once the link is back; a stop that reached the mower goes to the log only.
-- The arrow speed is asked when you press Start, not after every WiFi/4G switch.
+- The arrow keys only drive: with the camera on, a focused drop-down, slider, number box or the map no longer takes them, and without a live picture they do nothing.
+- The camera window (the 📷 on the map or the Overview) now drives its own mower with the arrow keys. The first press asks the arrow speed inside the window; closing the window or switching its mower while a key is held stops that mower.
+- A 4G or WiFi-direct picture more than a second behind now pauses driving and stops the blades until it catches up, as WiFi through the Toolkit already did — in the Remote tab and the camera window.
+- **Keep camera on** ends about 5 minutes after the page that switched it on is closed.
 
-## Logs and connection
+## Camera
 
-- The **Logs** tab shows the mower's work, commands and who sent them, faults and anything that did not take. Technical lines (cloud link, camera, light details) are in the downloaded file, for when you ask for help.
-- A sleeping mower is no longer woken by the Toolkit's own retries or save checks — each wake is a new sign-in that can bump the official app off your account.
-- A command that does not reach the mower says "the cloud link is not responding right now" instead of a technical error.
+- When the mower's camera cannot start, the reason is shown (for example "that mower is not connected right now") and the next way is tried at once, instead of after 25 seconds.
+- The WiFi picture moves to the mower's direct link only when that link is no further behind, and goes back if it falls behind.
+- On Android, Mac and Linux browsers the WiFi picture should no longer jump backward.
+
+## Installs
+
+- **Docker:** finished helper processes are cleaned up.
+- The settings snapshots kept before each change are capped at 100 per mower; older ones are removed.
+- **macOS:** starting the Toolkit by hand from Terminal now needs `sudo`. Running `sudo bash install.sh` again may move the Toolkit to `/usr/local/lymow-toolkit`; your sign-in, settings and maps come along.
+- **Security patches.**
 
 ## Languages
 
-- The new texts are translated, and short words (OK, On, Off and others) and the messages the server shows are no longer in English.
+- The new texts are translated.
