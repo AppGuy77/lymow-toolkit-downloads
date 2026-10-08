@@ -1,14 +1,12 @@
-Lymow Toolkit v2.10.5
+Lymow Toolkit v2.10.6
 
-An update fix for Mac and Linux. It keeps your sign-in, settings, maps, layout and history — just update.
-
-
-- **Mac and Linux: the update should install again.** v2.10.4 stopped with a Python version message on Macs and Linux machines running Python 3.10, and on Intel Macs.
-- **Still on v2.10.3?** This update brings everything in v2.10.4 too — see the change log.
+A remote-control fix. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
-## Installs
+- **Driving should resume after a "picture is behind" pause** once the camera picture has been back under a second for a full second — in the Remote tab and the camera window.
 
-- **Mac and Linux:** the in-app update and `install.sh` should install again on Python 3.10 and on Intel Macs. Your install was not changed by the failed attempt — it kept running the version you had.
-- **Mac and Linux without Python 3.10 or newer:** `install.sh` now always downloads Python 3.12, the same Python the Windows and Docker versions use.
-- If an update cannot install its Python packages, the message now names the Python version your install runs.
+
+## Remote control
+
+- When the camera picture falls more than a second behind, driving and the blades still wait. Driving should now resume once the picture has been back under a second for a full second. Before, the picture had to get under 0.7 s, and a phone whose picture stayed just under a second — most often on WiFi through the Toolkit away from home — could stay paused.
+- Each pause and resume is recorded in the downloadable event log, with how far behind the picture was.
