@@ -1,24 +1,26 @@
-Lymow Toolkit v2.13.0
+Lymow Toolkit v2.13.1
 
-A table of every zone's settings, and a multi-pass fix for Do Not Disturb hours. It keeps your sign-in, settings, maps, layout and history — just update.
+Change the mow that is running, and map editing that reports the mower's decision. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
-- **Every zone and every setting in one table** — Mowing settings → Table: compare zones, change several at once, drag to reorder.
-- **The Mower settings column steps aside while the table shows** — the map and the table take the full width.
-- **A catch-up mow should no longer be cut off by Do Not Disturb hours** — the next pass waits for them to end.
+- **Change the mow that is running** — a This mow only panel in Mower settings: cut height, mowing speed, blade speed for the current mow; applying while cutting pauses, changes, resumes.
+- **Map editing by driving says what the mower decided** — Done reports saved or refused, with the mower's reason; a refused shape stays open to drive on.
+- **A boundary edit is two steps** — drive onto the existing boundary, press Start, redraw, press Done.
 
 
 ## New
 
-- **Every zone and every setting in one table.** Mowing settings has a **Form / Table** switch. Table shows every zone as a row and every cutting setting as a column, with an **All zones** row on top. Change the cells you want and press Save: each changed cell goes to its zone, a change in the All zones row to every zone, and the mower confirms it. A zone's own value is marked green, an unsaved cell orange; the count of unsaved cells shows beside the switch, and Save writes them whether the table or the form is showing. The cross-cut angle shows only on a Chess Board row. The pick box in a row selects the zone on the map, the same as tapping it there.
-- **Drag a zone to where you want it in the table** by its ⇅ handle — mouse or finger. The order is remembered on every browser and phone and does not change the order the mower mows in.
-- **On a phone the grid turns sideways** with the setting names pinned; the zones scroll inside the table, never the page. **In Fleet Mode** each mower gets its own table, in your mower order.
-- **The Mower settings column steps aside while the table shows** (its four settings are the table's first columns), and the map and the table take the full width. An edit left in that column becomes an unsaved table cell. Back on Form, or with the panel closed, the page is as before.
+- **Change the mow that is running.** Mower settings shows a **This mow only** panel while a mow is in progress: cut height, mowing speed and blade speed for the current mow, every zone in it. Your saved zone settings are not touched. Apply while the mower is cutting and it pauses, makes the change, and resumes; apply while it is paused and it stays paused for you to resume when you are ready. The panel says whether the mower accepted or refused the change.
 
 ## Fixed
 
-- **A catch-up (multi-pass) mow should no longer be cut off by Do Not Disturb hours.** When the hours began mid-run, the Toolkit mistook the mower's trip home for the end of a pass, ended its task where it stood and tried to start the next pass inside the hours — the mower sat outside until morning and nothing restarted. Now the mower's own task is left alone, the next pass waits until the hours end, and if the mower has not carried on by itself a few minutes after they end, the Toolkit sends it back out to finish (only while its mow is still unfinished, and never a mower you sent home). The Event log says "Do Not Disturb hours began" instead of "NOT commanded by the Toolkit".
+- **Map editing by driving now reports what the mower decided.** Start waits for the mower to accept the recording. Done says whether the mower saved the shape or refused it, in the Lymow app's own words — for example "this change would make the connected channel invalid" — and a refused shape stays open so you can drive on and press Done again, or Cancel. Before, the Toolkit said Saved whatever the mower did.
+- **A boundary edit is two steps.** Pick the zone, drive the mower onto the existing boundary, press Start, redraw the edge, finish on the old boundary, press Done. The mower measures the start and the end of your drive against the old boundary, so Start no longer fires the moment you pick the zone.
+- **A docking channel the mower saves itself should now close the recording.** The mower saves a channel that leads to the dock when it reaches and reads the dock; the Toolkit now notices and clears the banner instead of waiting for a Done that is already done.
+- **Remote control no longer sends a Pause while the mower is recording a map shape** (the "did not follow a command: Pause" lines).
+- **Edit Map stays usable while a recording is open**, and a reload picks the recording back up.
+- **Phone held sideways:** the camera's ✏️ Edit Map button is no longer hidden under the overlay toggles in fullscreen.
 
 ## Languages
 
-The new screens are translated in all 15 languages.
+The new panel and the new messages are translated in all 15 languages.
