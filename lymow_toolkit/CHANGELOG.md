@@ -1,26 +1,25 @@
-Lymow Toolkit v2.13.1
+Lymow Toolkit v2.14.0
 
-Change the mow that is running, and map editing that reports the mower's decision. It keeps your sign-in, settings, maps, layout and history — just update.
+Back up and restore your settings, Lymow One deck handling, and a Donate button. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
-- **Change the mow that is running** — a This mow only panel in Mower settings: cut height, mowing speed, blade speed for the current mow; applying while cutting pauses, changes, resumes.
-- **Map editing by driving says what the mower decided** — Done reports saved or refused, with the mower's reason; a refused shape stays open to drive on.
-- **A boundary edit is two steps** — drive onto the existing boundary, press Start, redraw, press Done.
+- **Back up and restore your settings** — Settings → Back up & restore: every setting, the imagery alignment, the mowed paint and heat maps in one file, to move to another computer or platform.
+- **Lymow One** — This mow only changes and the cut height after Recharge & Resume should now take effect.
+- **☕ Donate** — a button at the top of the page opens the Toolkit's Ko-fi page.
 
 
 ## New
 
-- **Change the mow that is running.** Mower settings shows a **This mow only** panel while a mow is in progress: cut height, mowing speed and blade speed for the current mow, every zone in it. Your saved zone settings are not touched. Apply while the mower is cutting and it pauses, makes the change, and resumes; apply while it is paused and it stays paused for you to resume when you are ready. The panel says whether the mower accepted or refused the change.
+- **Back up and restore your settings.** Settings → **Back up & restore** has **Download settings**: one file with every setting you made — preferences, Warnings & errors, schedules, per-zone cut settings, the cut-angle offset, channel settings, locations, RTK base names, the satellite-imagery alignment and your Home Assistant choices — plus what the map shows: the mowed paint, the freshness record and the RTK and link heat maps. On another computer or platform (Windows, Mac, Linux, Docker or the Home Assistant add-on), install the Toolkit, sign in with the same method as before (your away address follows your account), and use **Restore from file**. The Toolkit shows what the file will change and whether its mowers are on this account, keeps a copy of your current settings (downloadable, so a restore can be undone), writes the file's settings and checks every value afterwards. Your sign-in, passwords and tokens are never in the file, and the ones on the new Toolkit stay as they are. Restore waits while a mower is mowing. Shut the old Toolkit down first: two Toolkits on one account compete for the away address.
+- **☕ Donate.** A Donate button beside the 📖 glossary at the top of the page (a full-width button in the ☰ menu on a phone) opens the Toolkit's Ko-fi page in a new window. The Toolkit is free — donations are appreciated, never expected.
+- **Lymow One: Same as cut height.** The channel settings on a Lymow One have a button that sets the channel deck height to your cut height.
 
 ## Fixed
 
-- **Map editing by driving now reports what the mower decided.** Start waits for the mower to accept the recording. Done says whether the mower saved the shape or refused it, in the Lymow app's own words — for example "this change would make the connected channel invalid" — and a refused shape stays open so you can drive on and press Done again, or Cancel. Before, the Toolkit said Saved whatever the mower did.
-- **A boundary edit is two steps.** Pick the zone, drive the mower onto the existing boundary, press Start, redraw the edge, finish on the old boundary, press Done. The mower measures the start and the end of your drive against the old boundary, so Start no longer fires the moment you pick the zone.
-- **A docking channel the mower saves itself should now close the recording.** The mower saves a channel that leads to the dock when it reaches and reads the dock; the Toolkit now notices and clears the banner instead of waiting for a Done that is already done.
-- **Remote control no longer sends a Pause while the mower is recording a map shape** (the "did not follow a command: Pause" lines).
-- **Edit Map stays usable while a recording is open**, and a reload picks the recording back up.
-- **Phone held sideways:** the camera's ✏️ Edit Map button is no longer hidden under the overlay toggles in fullscreen.
+- **Lymow One: This mow only changes should now take effect.** On a Lymow One a cut height or mowing speed change for the running mow only took effect after the deck had been lowered all the way in remote control. The Toolkit now lowers the deck first, then makes the change.
+- **Lymow One: should go back to your cut height after Recharge & Resume.** A Lymow One came back from charging still cutting at the channel deck height. The Toolkit now re-applies your height once the mower is back inside the zone, clear of the channel.
+- **Saving settings to all zones should no longer change your channel settings.** A global save set the channel deck height to 100 mm and the wheels up when the Toolkit had no channel settings of its own saved; it now keeps the mower's own channel values.
 
 ## Languages
 
-The new panel and the new messages are translated in all 15 languages.
+The new section, the Donate button and the new messages are translated in all 15 languages.
