@@ -1,0 +1,165 @@
+name: docker-ghcr
+# Each run is NAMED after the version it builds, so a publisher waiting for THIS version's image can
+# watch THIS run. Before this, the newest run of the workflow stood in for "the build": a v2-beta build
+# dispatched a minute after a v1 build finished first and made the v1 add-on publisher conclude the
+# v1 image would never come (2026-09-18).
+run-name: "docker-ghcr ${{ inputs.version || github.event.release.tag_name }}"
+
+# Publish ONE multi-arch image per release, so Docker users can update with
+#   docker compose pull && docker compose up -d && docker image prune -f
+# instead of rebuilding locally (the prune: many Docker setups keep every old version) — and so anyone already running Watchtower gets automatic
+# updates without us ever touching /var/run/docker.sock.
+#
+# IT BUILDS FROM THE PUBLISHED DOCKER BUNDLE, NOT FROM THIS REPO'S SOURCE. The bundle produced by
+# tools/make_dist.sh contains the OBFUSCATED payload (rule 7); building from raw source here would
+# publish readable source to a public registry. The bundle is downloaded from the public downloads
+# repo's release for this tag.
+#
+# ARM64 AND ARMV7 ARE BUILT UNDER QEMU on a GitHub runner. That is slow but free and correct; doing
+# it on the Raspberry Pi took long enough that nobody would run it, and doing it on an x86 dev box
+# means the ARM images never get built at all.
+
+# v2.14.2: this workflow RUNS IN THE PUBLIC DOWNLOADS REPO (AppGuy77/lymow-toolkit-downloads), where GitHub Actions
+# minutes are free; it only ever needed the PUBLIC docker tarball of a release. Canonical copy: the source repo's
+# packaging/downloads-repo/.github/workflows/ (tools/sync_downloads_workflows.sh pushes it). DISPATCH ONLY:
+# tools/publish_github.sh dispatches it after the release exists — a `release: published` trigger here as well would
+# start a second build that races the first for :latest.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (e.g. 1.44.0)"
+        required: true
+      platforms:
+        # Splitting the architectures is sometimes worth it. armv7 has no prebuilt awscrt wheel, so
+        # that leg compiles a large C++ library under QEMU and takes the best part of an hour, while
+        # amd64 and arm64 finish in minutes. Running the fast pair first gets a usable image out to
+        # Docker and Home Assistant users without waiting on emulation; the full run overwrites the
+        # same tag afterwards with all three, so the end state is identical either way.
+        description: "Platforms to build (default: all three)"
+        required: false
+        default: "linux/amd64,linux/arm64,linux/arm/v7"
+      image:
+        description: "Image name override (the v2.7.0 beta-sunset bridge: the stable build published under the beta image name too)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  packages: write          # push to ghcr.io
+
+env:
+  DOWNLOADS_REPO: AppGuy77/lymow-toolkit-downloads
+  IMAGE: ghcr.io/appguy77/lymow-toolkit
+  # DOCKER HUB MIRROR. Not because GHCR is lacking — it has no pull limits and stays the canonical
+  # image that docker-compose.yml and the HA add-on point at — but because NAS Docker UIs (UGREEN,
+  # Synology, QNAP) can only SEARCH Docker Hub. ghcr.io has no search API for them to call, so an
+  # image published only there is invisible to anyone who looks for it by name instead of pasting a
+  # URL. Same build, pushed to both, so the two can never diverge.
+  DOCKERHUB_IMAGE: docker.io/appguy77/lymow-toolkit
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Work out the version
+        id: ver
+        run: |
+          V="${{ github.event.inputs.version }}"
+          [ -n "$V" ] || V="${GITHUB_REF_NAME#v}"
+          # Never publish a test build to the registry users pull from.
+          case "$V" in
+            *-inc*|*-dev*|*-rc*) echo "refusing to publish pre-release $V"; exit 1;;
+          esac
+          # THE CHANNEL (docs/V2-BETA-CHANNEL-PLAN.md): a -beta version builds the v2-beta image and never moves
+          # the stable image's :latest; a plain version builds the stable image.
+          case "$V" in
+            *-beta*) echo "IMAGE=ghcr.io/appguy77/lymow-toolkit-v2-beta" >> "$GITHUB_ENV"; echo "DOCKERHUB_IMAGE=" >> "$GITHUB_ENV"; echo "DOWNLOADS_REPO=AppGuy77/lymow-toolkit-v2-beta" >> "$GITHUB_ENV"; echo "channel: BETA image + beta downloads repo";;
+            *) echo "channel: STABLE image";;
+          esac
+          if [ -n "${{ github.event.inputs.image }}" ]; then
+            echo "IMAGE=${{ github.event.inputs.image }}" >> "$GITHUB_ENV"; echo "DOCKERHUB_IMAGE=" >> "$GITHUB_ENV"
+            echo "image name overridden: ${{ github.event.inputs.image }} (no Docker Hub mirror)"
+          fi
+          echo "v=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch the OBFUSCATED docker bundle for this release
+        run: |
+          V="${{ steps.ver.outputs.v }}"
+          URL="https://github.com/${DOWNLOADS_REPO}/releases/download/v${V}/lymow-docker-v${V}.tar.gz"
+          echo "fetching $URL"
+          curl -fSL "$URL" -o bundle.tar.gz
+          mkdir -p ctx && tar -xzf bundle.tar.gz -C ctx --strip-components=1
+          test -f ctx/Dockerfile || { echo "bundle has no Dockerfile"; ls -R ctx | head; exit 1; }
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Docker Hub is OPTIONAL: without the secrets the release still publishes to GHCR rather than
+      # failing. It says which happened — a silently skipped mirror is how "why can't anyone find it
+      # on their NAS" becomes a mystery months later.
+      - name: Docker Hub credentials present?
+        id: dh
+        run: |
+          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ] && [ -n "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "have=yes" >> "$GITHUB_OUTPUT"
+            echo "Docker Hub mirror: ENABLED (${DOCKERHUB_IMAGE})"
+          else
+            echo "have=no" >> "$GITHUB_OUTPUT"
+            echo "Docker Hub mirror: SKIPPED — DOCKERHUB_USERNAME/DOCKERHUB_TOKEN are not set on this repo."
+            echo "GHCR is still published; the image just will not be searchable from NAS Docker UIs."
+          fi
+
+      - uses: docker/login-action@v3
+        if: steps.dh.outputs.have == 'yes' && env.DOCKERHUB_IMAGE != ''
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push (amd64 + arm64 + armv7)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./ctx
+          platforms: ${{ github.event.inputs.platforms || 'linux/amd64,linux/arm64,linux/arm/v7' }}
+          push: true
+          # The image learns its own name (v2.7.0): a stable build running from the beta image name tells
+          # the user, in the header, to move to the official image — see app/server.py _repo_move().
+          build-args: |
+            LYMOW_IMAGE=${{ env.IMAGE }}
+          # :latest moves only for real releases — the refusal above keeps -incN off it entirely,
+          # so a `docker compose pull` can never land a user on a test build.
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.ver.outputs.v }}
+            ${{ env.IMAGE }}:latest
+            ${{ (steps.dh.outputs.have == 'yes' && env.DOCKERHUB_IMAGE != '') && format('{0}:{1}', env.DOCKERHUB_IMAGE, steps.ver.outputs.v) || '' }}
+            ${{ (steps.dh.outputs.have == 'yes' && env.DOCKERHUB_IMAGE != '') && format('{0}:latest', env.DOCKERHUB_IMAGE) || '' }}
+          # PERSISTENT REGISTRY CACHE — NOT type=gha. GitHub Actions cache is capped at 10 GB per repo
+          # with LRU eviction + a 7-day expiry, and a mode=max multi-arch build is big: the armv7 leg
+          # compiles awscrt/cffi/cryptography from source (no 32-bit-ARM wheels) and stores that plus the
+          # whole build toolchain. That set is large enough to evict itself between releases, so a build
+          # that SHOULD reuse the compiled layer instead recompiled under QEMU for ~90 min (v1.53.1 hit
+          # exactly this). A registry cache lives in GHCR under its own :buildcache tag, has no 10 GB cap,
+          # and persists across runs — so as long as requirements.txt + the base image + the RUN line are
+          # unchanged, every build reuses the compiled layer and finishes in minutes. type=gha stays as a
+          # secondary source only to warm the FIRST build after this change (the :buildcache tag does not
+          # exist yet); from then on the registry cache carries it.
+          cache-from: |
+            type=registry,ref=${{ env.IMAGE }}:buildcache
+            type=gha
+          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+
+      - name: Say where it landed
+        run: |
+          V="${{ steps.ver.outputs.v }}"
+          echo "published ${IMAGE}:$V and :latest"
+          if [ "${{ steps.dh.outputs.have }}" = "yes" ] && [ -n "$DOCKERHUB_IMAGE" ]; then
+            echo "published ${DOCKERHUB_IMAGE}:$V and :latest"
+          else
+            echo "Docker Hub mirror NOT published (no credentials) — NAS search will not find it."
+          fi

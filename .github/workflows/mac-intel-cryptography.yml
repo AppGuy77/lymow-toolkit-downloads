@@ -1,0 +1,151 @@
+# v2.14.1 — cryptography for Intel Macs.
+#
+# cryptography 49+ publishes no Intel-Mac (macosx x86_64) wheel, so Intel Macs were pinned to 48.0.1, which carries three
+# advisories fixed in 49/50 (GHSA-g6cj-pr64-35w5, GHSA-jwv3-5hgf-82ww, GHSA-m2h6-j472-rp4c). Compiling on the user's Mac
+# needs a Rust toolchain they do not have, so this builds the wheel HERE, on an Intel Mac runner, against a STATIC OpenSSL
+# (no Homebrew dylib on the user's machine), proves it, and uploads it. requirements.txt points Intel Macs at the published
+# copy by URL with its sha256 — so an Intel Mac running ANY older Toolkit (whose updater just runs pip install -r) gets it.
+#
+# RUNS IN THE PUBLIC DOWNLOADS REPO (free minutes, macOS included). That repo carries no source, so requirements.txt is
+# read from the newest release's Mac bundle (the file every Mac install and updater uses).
+#   gh workflow run mac-intel-cryptography.yml -R AppGuy77/lymow-toolkit-downloads                 # build + prove
+#   gh workflow run mac-intel-cryptography.yml -R AppGuy77/lymow-toolkit-downloads -f req_line='…'  # prove the URL line
+name: mac-intel-cryptography
+on:
+  workflow_dispatch:
+    inputs:
+      req_line:
+        description: "Optional: the Intel-Mac requirements line to prove (installs it exactly as an updater would)"
+        required: false
+        default: ""
+permissions:
+  contents: read
+env:
+  CRYPTOGRAPHY_VERSION: "50.0.2"
+  CRYPTOGRAPHY_SDIST_SHA256: "7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5"
+  OPENSSL_VERSION: "3.5.9"
+  OPENSSL_SHA256: "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a"
+  MACOSX_DEPLOYMENT_TARGET: "10.13"
+jobs:
+  build:
+    if: ${{ inputs.req_line == '' }}
+    runs-on: macos-15-intel
+    steps:
+      - name: requirements.txt from the newest release's Mac bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG=$(gh release view -R "$GITHUB_REPOSITORY" --json tagName -q .tagName)
+          gh release download "$TAG" -R "$GITHUB_REPOSITORY" -p "lymow-mac-*.tar.gz" -O mac.tgz
+          tar -xOzf mac.tgz lymow-mac/requirements.txt > requirements.txt
+          echo "requirements.txt from $TAG:"; grep -n "^cryptography" requirements.txt
+      - uses: actions/setup-python@v5
+        with:
+          python-version: |
+            3.10
+            3.13
+            3.12
+      - name: The runner is an Intel Mac
+        run: test "$(uname -m)" = x86_64 && sw_vers
+      - name: Static OpenSSL ${{ env.OPENSSL_VERSION }}
+        run: |
+          set -euo pipefail
+          curl -fsSLo ossl.tgz "https://github.com/openssl/openssl/releases/download/openssl-$OPENSSL_VERSION/openssl-$OPENSSL_VERSION.tar.gz"
+          echo "$OPENSSL_SHA256  ossl.tgz" | shasum -a 256 -c -
+          tar xzf ossl.tgz && cd "openssl-$OPENSSL_VERSION"
+          ./Configure darwin64-x86_64-cc no-shared no-tests no-docs no-apps --prefix="$HOME/ossl" --libdir=lib \
+            -mmacosx-version-min="$MACOSX_DEPLOYMENT_TARGET"
+          make -j"$(sysctl -n hw.ncpu)" >/dev/null && make install_sw >/dev/null
+          ls "$HOME/ossl/lib"
+      - name: Build the wheel from the verified source archive
+        run: |
+          set -euo pipefail
+          # BUILT WITH 3.10: an abi3 wheel's floor is the Python that built it (a 3.12 build is cp312-abi3 and refuses
+          # 3.10/3.11 — caught by the next-but-one step). 3.10 is install.sh's minimum, so cp310-abi3 covers every Mac.
+          python3.10 -m pip install --upgrade pip
+          python3.10 -m pip download --no-binary :all: --no-deps "cryptography==$CRYPTOGRAPHY_VERSION" -d sdist
+          echo "$CRYPTOGRAPHY_SDIST_SHA256  sdist/cryptography-$CRYPTOGRAPHY_VERSION.tar.gz" | shasum -a 256 -c -
+          OPENSSL_DIR="$HOME/ossl" OPENSSL_STATIC=1 \
+            python3.10 -m pip wheel --no-deps -w wheelhouse "sdist/cryptography-$CRYPTOGRAPHY_VERSION.tar.gz"
+          ls -la wheelhouse
+      - name: Prove it is self-contained and runs on macOS 10.13+
+        run: |
+          set -euo pipefail
+          W=$(ls wheelhouse/cryptography-*.whl); echo "$W"
+          case "$W" in *macosx_10_13_x86_64*.whl) ;; *) echo "FAIL: not a macOS 10.13 x86_64 wheel: $W"; exit 1;; esac
+          case "$W" in *-cp310-abi3-*) ;; *) echo "FAIL: not a cp310-abi3 wheel (must install on Python 3.10+): $W"; exit 1;; esac
+          python -m pip install delocate
+          delocate-listdeps --all "$W" | tee deps.txt
+          if grep -vE '^(/usr/lib/|/System/Library/)' deps.txt | grep -q .; then echo "FAIL: links outside the system"; exit 1; fi
+          mkdir x && cd x && unzip -q "../$W"
+          for so in $(find . -name '*.so'); do otool -l "$so" | grep -A3 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX'; done
+      - name: Runs on Python 3.10 and 3.13 (fresh venvs)
+        run: |
+          set -euo pipefail
+          W=$(ls wheelhouse/cryptography-*.whl)
+          for v in 3.10 3.13; do
+            "python$v" -m venv "v$v" && "v$v/bin/python" -m pip install --quiet "$W"
+            "v$v/bin/python" - <<'PY'
+          from cryptography.hazmat.backends.openssl.backend import backend
+          from cryptography.hazmat.primitives.asymmetric import ec
+          from cryptography.hazmat.primitives import hashes
+          from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+          from cryptography import x509
+          from cryptography.x509.oid import NameOID
+          import cryptography, datetime, os
+          k = ec.generate_private_key(ec.SECP256R1())
+          sig = k.sign(b"lymow", ec.ECDSA(hashes.SHA256())); k.public_key().verify(sig, b"lymow", ec.ECDSA(hashes.SHA256()))
+          a = AESGCM(AESGCM.generate_key(bit_length=128)); n = os.urandom(12); assert a.decrypt(n, a.encrypt(n, b"x", None), None) == b"x"
+          name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "lymow")]); now = datetime.datetime.now(datetime.timezone.utc)
+          x509.CertificateBuilder().subject_name(name).issuer_name(name).public_key(k.public_key()).serial_number(1) \
+              .not_valid_before(now).not_valid_after(now + datetime.timedelta(days=1)).sign(k, hashes.SHA256())
+          print("OK", cryptography.__version__, backend.openssl_version_text())
+          PY
+          done
+      - name: The Toolkit's own requirements install with it on Python 3.10 (Intel-Mac line -> this wheel)
+        run: |
+          set -euo pipefail
+          W=$(ls wheelhouse/cryptography-*.whl)
+          # the Intel-Mac line is replaced whatever its form (a version pin, or our published wheel's URL) by THIS build's wheel
+          sed -E 's/^cryptography(==[0-9.]+| @ [^;]+);[ ]*sys_platform == "darwin" and platform_machine != "arm64".*$/cryptography=='"$CRYPTOGRAPHY_VERSION"'; sys_platform == "darwin" and platform_machine != "arm64"/' requirements.txt > req-intel.txt
+          grep -n "^cryptography" req-intel.txt
+          python3.10 -m venv t && t/bin/python -m pip install --quiet --upgrade pip
+          t/bin/python -m pip install --find-links wheelhouse --only-binary cryptography -r req-intel.txt
+          t/bin/python -c "import cryptography, http_ece, py_vapid, firebase_messaging, jwt, pycognito; print('Toolkit libraries OK with cryptography', cryptography.__version__)"
+          test "$(t/bin/python -c 'import cryptography; print(cryptography.__version__)')" = "$CRYPTOGRAPHY_VERSION"
+      - name: Checksum
+        run: cd wheelhouse && shasum -a 256 cryptography-*.whl | tee SHA256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cryptography-${{ env.CRYPTOGRAPHY_VERSION }}-macos-x86_64
+          path: wheelhouse/
+          if-no-files-found: error
+  prove-url:
+    if: ${{ inputs.req_line != '' }}
+    runs-on: macos-15-intel
+    steps:
+      - name: requirements.txt from the newest release's Mac bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG=$(gh release view -R "$GITHUB_REPOSITORY" --json tagName -q .tagName)
+          gh release download "$TAG" -R "$GITHUB_REPOSITORY" -p "lymow-mac-*.tar.gz" -O mac.tgz
+          tar -xOzf mac.tgz lymow-mac/requirements.txt > requirements.txt
+          echo "requirements.txt from $TAG:"; grep -n "^cryptography" requirements.txt
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install requirements.txt with the published Intel-Mac line, exactly as an updater would (pip install -r)
+        env:
+          REQ_LINE: ${{ inputs.req_line }}
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = x86_64
+          grep -vE '^cryptography(==| @)[^;]*; sys_platform == "darwin" and platform_machine != "arm64"' requirements.txt > req.txt
+          printf '%s\n' "$REQ_LINE" >> req.txt
+          python3.10 -m venv u && u/bin/python -m pip install --quiet --upgrade pip
+          u/bin/python -m pip install -r req.txt
+          test "$(u/bin/python -c 'import cryptography; print(cryptography.__version__)')" = "$CRYPTOGRAPHY_VERSION"
+          u/bin/python -c "import http_ece, py_vapid, firebase_messaging, jwt, pycognito; print('OK: the published line installs and imports')"
