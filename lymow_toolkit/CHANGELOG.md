@@ -1,11 +1,11 @@
-Lymow Toolkit v2.14.0
+Lymow Toolkit v2.14.2
 
-Back up and restore your settings, Lymow One deck handling, and a Donate button. It keeps your sign-in, settings, maps, layout and history — just update.
+Back up and restore your settings, Lymow One deck handling, a Donate button, security patches and clearer wording in every language. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
 - **Back up and restore your settings** — Settings → Back up & restore: every setting, the imagery alignment, the mowed paint and heat maps in one file, to move to another computer or platform.
 - **Lymow One** — This mow only changes and the cut height after Recharge & Resume should now take effect.
-- **☕ Donate** — a button at the top of the page opens the Toolkit's Ko-fi page.
+- **Security patches**, and one name for each control in every language.
 
 
 ## New
@@ -16,10 +16,11 @@ Back up and restore your settings, Lymow One deck handling, and a Donate button.
 
 ## Fixed
 
+- **Security patches.**
 - **Lymow One: This mow only changes should now take effect.** On a Lymow One a cut height or mowing speed change for the running mow only took effect after the deck had been lowered all the way in remote control. The Toolkit now lowers the deck first, then makes the change.
 - **Lymow One: should go back to your cut height after Recharge & Resume.** A Lymow One came back from charging still cutting at the channel deck height. The Toolkit now re-applies your height once the mower is back inside the zone, clear of the channel.
 - **Saving settings to all zones should no longer change your channel settings.** A global save set the channel deck height to 100 mm and the wheels up when the Toolkit had no channel settings of its own saved; it now keeps the mower's own channel values.
 
 ## Languages
 
-The new section, the Donate button and the new messages are translated in all 15 languages.
+The new section, the Donate button and the new messages are translated in all 15 languages, and every control now has one name throughout each language, with a few mistranslations corrected.
