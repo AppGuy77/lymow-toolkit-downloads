@@ -1,26 +1,23 @@
-Lymow Toolkit v2.14.2
+Lymow Toolkit v2.14.3
 
-Back up and restore your settings, Lymow One deck handling, a Donate button, security patches and clearer wording in every language. It keeps your sign-in, settings, maps, layout and history — just update.
-
-
-- **Back up and restore your settings** — Settings → Back up & restore: every setting, the imagery alignment, the mowed paint and heat maps in one file, to move to another computer or platform.
-- **Lymow One** — This mow only changes and the cut height after Recharge & Resume should now take effect.
-- **Security patches**, and one name for each control in every language.
+Lymow One deck reset after Recharge & Resume and between zones, a calmer remote control, and security patches. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
-## New
+- **Lymow One** — the deck should go back to your mowing height after Recharge & Resume and after a channel crossing into the next zone.
+- **Remote control** — the "mower did not move" notice should no longer pop up while driving fine, and the small map follows the mower again.
+- **Cutting & scheduling** grows while its panels are open in an arranged layout, and **security patches**.
 
-- **Back up and restore your settings.** Settings → **Back up & restore** has **Download settings**: one file with every setting you made — preferences, Warnings & errors, schedules, per-zone cut settings, the cut-angle offset, channel settings, locations, RTK base names, the satellite-imagery alignment and your Home Assistant choices — plus what the map shows: the mowed paint, the freshness record and the RTK and link heat maps. On another computer or platform (Windows, Mac, Linux, Docker or the Home Assistant add-on), install the Toolkit, sign in with the same method as before (your away address follows your account), and use **Restore from file**. The Toolkit shows what the file will change and whether its mowers are on this account, keeps a copy of your current settings (downloadable, so a restore can be undone), writes the file's settings and checks every value afterwards. Your sign-in, passwords and tokens are never in the file, and the ones on the new Toolkit stay as they are. Restore waits while a mower is mowing. Shut the old Toolkit down first: two Toolkits on one account compete for the away address.
-- **☕ Donate.** A Donate button beside the 📖 glossary at the top of the page (a full-width button in the ☰ menu on a phone) opens the Toolkit's Ko-fi page in a new window. The Toolkit is free — donations are appreciated, never expected.
-- **Lymow One: Same as cut height.** The channel settings on a Lymow One have a button that sets the channel deck height to your cut height.
 
 ## Fixed
 
+- **Lymow One: the deck should go back to your mowing height after Recharge & Resume.** A Lymow One that came back from charging kept cutting with its deck raised. Once the mower is back in the zone it was mowing, the Toolkit now pauses it, lowers the deck all the way, gives it a moment to settle and resumes the mow — the same steps that fixed it by hand in remote control. The Event log shows each one as **🛞 Lymow One deck reset**.
+- **Lymow One: the same after crossing a channel into the next zone.** When the mower leaves one task zone through a channel and arrives in the next, the deck is reset the same way.
+- **Remote control: the "mower did not move" notice should no longer pop up while the mower is driving fine.** Over 4G (and WiFi) a move that only waited inside the Toolkit was judged late and refused. A move is now judged from when it reached the Toolkit, against the connection's recent speed, so only a really late connection holds a move. The notice waits 3 seconds and shows in the camera's status line instead of over the picture — the "picture is behind" notice does too. A refused Stop still shows in the middle of the screen.
+- **The remote control's small map keeps the mower centered again.** It stopped following the mower after the first move.
+- **No more false "resumed — not commanded by the Toolkit" entries.** A status report that briefly left out the mower's state was read as the mower resuming by itself.
+- **Cutting & scheduling grows to show everything.** In a layout you arranged with a set height for Cutting & scheduling, opening Cutting parameters, Multi-pass or Adjust cut angle offset squeezed it into that height behind a scrollbar. The box now grows while one of them is open and goes back to its set size when you close it.
 - **Security patches.**
-- **Lymow One: This mow only changes should now take effect.** On a Lymow One a cut height or mowing speed change for the running mow only took effect after the deck had been lowered all the way in remote control. The Toolkit now lowers the deck first, then makes the change.
-- **Lymow One: should go back to your cut height after Recharge & Resume.** A Lymow One came back from charging still cutting at the channel deck height. The Toolkit now re-applies your height once the mower is back inside the zone, clear of the channel.
-- **Saving settings to all zones should no longer change your channel settings.** A global save set the channel deck height to 100 mm and the wheels up when the Toolkit had no channel settings of its own saved; it now keeps the mower's own channel values.
 
 ## Languages
 
-The new section, the Donate button and the new messages are translated in all 15 languages, and every control now has one name throughout each language, with a few mistranslations corrected.
+The new messages are translated in all 15 languages.
