@@ -1,22 +1,16 @@
-Lymow Toolkit v2.14.3
+Lymow Toolkit v2.14.4
 
-Lymow One deck reset after Recharge & Resume and between zones, a calmer remote control, and security patches. It keeps your sign-in, settings, maps, layout and history — just update.
+A Lymow One deck reset at the spot where the mow resumes, and the Edit Map button back on the phone's Remote. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
-- **Lymow One** — the deck should go back to your mowing height after Recharge & Resume and after a channel crossing into the next zone.
-- **Remote control** — the "mower did not move" notice should no longer pop up while driving fine, and the small map follows the mower again.
-- **Cutting & scheduling** grows while its panels are open in an arranged layout, and **security patches**.
+- **Lymow One** — the deck reset should now happen where the mow resumes: the spot where it stopped mowing after Recharge & Resume, and the next zone after a channel.
+- **Remote control on a phone** — ✏️ Edit Map is back with two joysticks, next to ✕ Exit in fullscreen.
 
 
 ## Fixed
 
-- **Lymow One: the deck should go back to your mowing height after Recharge & Resume.** A Lymow One that came back from charging kept cutting with its deck raised. Once the mower is back in the zone it was mowing, the Toolkit now pauses it, lowers the deck all the way, gives it a moment to settle and resumes the mow — the same steps that fixed it by hand in remote control. The Event log shows each one as **🛞 Lymow One deck reset**.
-- **Lymow One: the same after crossing a channel into the next zone.** When the mower leaves one task zone through a channel and arrives in the next, the deck is reset the same way.
-- **Remote control: the "mower did not move" notice should no longer pop up while the mower is driving fine.** Over 4G (and WiFi) a move that only waited inside the Toolkit was judged late and refused. A move is now judged from when it reached the Toolkit, against the connection's recent speed, so only a really late connection holds a move. The notice waits 3 seconds and shows in the camera's status line instead of over the picture — the "picture is behind" notice does too. A refused Stop still shows in the middle of the screen.
-- **The remote control's small map keeps the mower centered again.** It stopped following the mower after the first move.
-- **No more false "resumed — not commanded by the Toolkit" entries.** A status report that briefly left out the mower's state was read as the mower resuming by itself.
-- **Cutting & scheduling grows to show everything.** In a layout you arranged with a set height for Cutting & scheduling, opening Cutting parameters, Multi-pass or Adjust cut angle offset squeezed it into that height behind a scrollbar. The box now grows while one of them is open and goes back to its set size when you close it.
-- **Security patches.**
+- **Lymow One: the deck reset should now happen where the mow resumes.** The Lymow One's firmware raises its deck for channels (including the trip to and from the dock) and doesn't lower it again, so it kept cutting at the channel height. When a Lymow One with its mow open heads home to charge, the Toolkit now records the exact spot where it stopped mowing. When the mower is back at that spot, it pauses, sends the deck all the way down (the same as the Remote's Deck control at its lowest), waits for the deck and resumes. After a channel crossing into the mow's next zone it does the same as soon as the mower is in that zone. Zones it only drives through are left alone. The Event log shows each reset as **🛞 Lymow One deck reset**, and says if the mow ended before the mower got back to that spot. The Lymow One Plus is not affected.
+- **Remote control on a phone: ✏️ Edit Map with two joysticks.** With two joysticks the Edit Map button was hidden, and in fullscreen on a phone there was no other way to start editing the map. In fullscreen it now sits next to ✕ Exit, with one joystick or two.
 
 ## Languages
 
