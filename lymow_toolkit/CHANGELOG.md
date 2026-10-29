@@ -1,23 +1,29 @@
-Lymow Toolkit v2.14.5
+Lymow Toolkit v2.14.6
 
-Sorting and cut-line previews in the Cutting parameters Table, a Table that works on a phone, and the Lymow One's own zone settings after charging and between zones. It keeps your sign-in, settings, maps, layout and history — just update.
+Run the Toolkit online, one phone link for every QR code and notification, and Settings restore fixes. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
-- **Cutting parameters Table** — sort the zones by any setting, and see each zone's cut lines while you change the angle.
-- **Table on a phone** — tapping a box should no longer zoom the page; the box stays in view.
-- **Lymow One** — each zone's own settings should go back on after Recharge & Resume and between zones.
+- **Run it online** — Northflank's free plan can host the Toolkit and updates it every night; the wiki has a step-by-step page and a ready template.
+- **Phone link** — one address for every QR code and notification tap, and you choose it.
+- **Back up & restore** — should no longer fail with "MemoryError".
 
 
 ## New
 
-- **Cutting parameters Table: sort the zones by any setting.** Tap a column's name (on a phone, a setting's name in the pinned column, or the Zone corner) to sort the zones by it; tap again to reverse. Numbers sort as numbers, choices by their name, and a dash goes last. The sorted order is remembered on every browser and phone until you sort again or drag a zone by its ⇅ handle.
-- **Cutting parameters Table: each zone's cut lines.** Hover a zone's name with a mouse, or tap it, to see that zone alone with its strips at the angle the table shows (a cross-cut draws both directions; Optimized is an estimate). While you change a zone's Strip angle, Pattern or Cross-cut angle, the picture sits next to the box and redraws with every digit you type — on a phone, in the space above the keypad, never over the box.
+- **Run the Toolkit online — no computer that stays on needed.** Northflank's free Developer Sandbox plan can host it. The wiki's new page, *Run the Toolkit online (Northflank)*, walks through every screen with a picture, and a ready template for each of Northflank's regions creates the Toolkit with its own storage at /app/data, so the dashboard password, the Lymow sign-in and every setting survive restarts and updates. The template also sets up a nightly update: every night at about 3 AM in your region's time the Toolkit restarts on the newest version. For an update sooner, restart the service in Northflank.
+- **Phone link: one address for every QR code.** The 📱 window, the phone section of the sign-in screen, Settings → Remote access and the push notifications' Address for phones all hand out the same address, picked in one place: **Automatic** (at home the away link, or the home-network address while away access is off; online the Toolkit's own https address), **This address** (the https address you opened the Toolkit with), **Home network** (for a phone on a VPN), **Away link** or **My own https address**. A tap on a push notification opens it.
 
 ## Changed
 
-- **The Table gets the whole width.** While the table shows, Mower settings is hidden (its settings are the table's first columns). During a mow, This mow only stays so you can still change the running mow.
+- **Push notifications: Address for phones is the phone link.** A custom https address you set before carries over. The list of phones shows any that turned notifications on at another address, so you know which to turn on again from the phone link.
 
 ## Fixed
 
-- **Cutting parameters Table on a phone: tapping a box should no longer zoom the page.** The table's boxes had text small enough for Safari to zoom in on them, which could push the box you were typing in out of sight. The box you tap is now moved fully into view inside the table, clear of the pinned setting names, and the table keeps its place after a change instead of jumping back to the first zone.
-- **Lymow One: each zone's own settings should go back on after Recharge & Resume and between zones.** The Lymow One's firmware raises its deck for channels (including the trip to and from the dock) and doesn't lower it again. After charging, once the mower stops in the zone it was mowing — and after a channel, once it stops in the mow's next zone — the Toolkit pauses it, lowers the deck all the way, puts back that zone's own cut height, blade speed and mowing speed from the mower's map, and resumes. Zones it only drives through are left alone. The Event log shows each step with 🛞, and says if the mower refused the settings or did not resume. The Lymow One Plus is not affected.
+- **Settings → Back up & restore should no longer fail with "MemoryError".** A restore asked the system for far more memory than it needed, which a machine that limits memory (a hosted plan) refused — for every backup, however small. The page then also showed "auth required" instead of the real error.
+- **Restoring a backup should keep your notification switches.** A backup from an older version could come back with five notifications switched off.
+- **A fresh install should open on the first mower in your list.** With two or more mowers it waited on "select mower" until you picked one.
+- **Online (hosted) Toolkit:**
+  - Google sign-in should work on a small plan.
+  - The WiFi camera uses the direct link from any address — the Toolkit itself cannot reach your home network there.
+  - The away link turns itself off; the Toolkit already has its own address.
+  - Updates say to restart the service instead of offering an install the next restart would undo.
