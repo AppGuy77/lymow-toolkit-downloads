@@ -1,33 +1,24 @@
-Lymow Toolkit v2.14.10
+Lymow Toolkit v2.14.11
 
-Mower settings in step with the official Lymow app, mower clocks that follow daylight saving, the camera readings bar always on, the Singapore region, seven more languages and the user wiki in all 24. It keeps your sign-in, settings, maps, layout and history — just update.
+The RTK pause, reworked from a field report: it pauses when RTK is lost, lets a mower out of a shed, gives way to your Resume, and no longer fills the screen with alerts. It keeps your sign-in, settings, maps, layout and history — just update.
 
 
-- **Settings match the official app** — Pause on RTK loss, Return to dock on error, the light window and the time zone are one setting, kept by the mower.
-- **Mower clocks** — each mower's clock kept right through daylight saving.
-- **Readings bar** — always on, on every mower camera.
-- **Singapore** — sign in from the new region.
-- **Seven more languages** — Simplified Chinese, Polish, Croatian, Slovenian, Norwegian, Malay, Tamil; the wiki is in all 24.
+- **Pause on RTK loss** — pauses when RTK is lost; the precision limit is its own switch.
+- **Docks in a shed** — the drive out from the dock is not paused before the first good fix.
+- **Your Resume wins** — a Resume from either app stands the RTK pause down until RTK is good again.
+- **Quieter alerts** — no false "could not be sent"; a repeated alert shows once with a count.
 
 
 ## New
 
-- **Mower settings now match the official Lymow app.** A setting both apps have is one setting, kept by the mower: change it in the Toolkit and the official app shows it; change it in the app and the Toolkit shows it. This covers **Pause on RTK loss**, **Return to dock on error**, the **light window** (Night Mode) and the mower's **time zone**. Pause on RTK loss is the official app's own switch, now in the Toolkit's RTK window (Map → RTK precision) with the Toolkit's precision limits under it. The Toolkit's own extras — sunset-to-sunrise lights, auto-resume, the daylight-saving offset on older firmware — keep working as you set them.
-- **Mower clocks (Settings → Time zone).** Each mower keeps its own clock for its schedules, night lights and Recharge & Resume hours, and the Toolkit keeps it right through daylight saving. Mower firmware v2.1.51.2 and newer keeps a time zone by name and adjusts for daylight saving itself; older firmware gets the correct offset at each change. The list shows every mower's firmware and zone, with **Set now** to write the zone you picked. Schedules made in the official app show on the Calendar at the time the mower actually runs them after a daylight-saving change.
-- **The readings bar is always on** — on the Remote camera, a mower's camera window and every grid tile, whether the camera is off, starting, live or fullscreen. Before any reading arrives it says "No readings yet".
-- **Singapore region** at sign-in (Asia Pacific (Singapore)), including the away link.
-- **Seven more languages:** Simplified Chinese, Polish, Croatian, Slovenian, Norwegian, Malay and Tamil. The Toolkit now ships in 24 languages (Settings → Language), and the user wiki is in all 24.
+- **Pause on RTK loss pauses when RTK is lost** — no fix, or plain GPS — exactly what the switch means in the official app. Pausing while RTK is still present but its precision is worse than your limit is a new switch under it, **Also pause on poor precision** (Map → 🛰 Precision heat ⚙️). It is off by default; if you had changed the limit from 0.10 m it stays on. A limit saved to a zone or channel always applies there.
+- **Docks in a shed or garage:** the RTK pause no longer stops the mower on the map's docking channel, or on its way out from the dock until the first good fix of the mow — no setting needed. **Skip near the dock** still adds a distance of your own, and a limit you saved on the docking channel still applies.
+- **A Resume beats the RTK pause.** Resume the mower — in the official app, another Toolkit or this one — while the RTK or link pause is holding, and that pause stands down instead of pausing it again. It watches again once the signal has been good, or the mower is back on its dock.
+- **Changes to the pause guards' settings are in the event log**, with the old and new value.
 
 ## Fixed
 
-- **Changing the time zone should now redraw the logs, calendar and night lights at once** instead of after a reload.
-- **On a phone the camera window takes the screen's width**, so the readings, Keep camera on and the task buttons never overlap.
-- **RTK "Add a base" should no longer scroll the page sideways** in phone landscape, and the Home Assistant **Restore / Update file picker should fit a small phone**.
-- **Error names as the official app names them:** 48 is "Bumper jammed (reverse timeout)", 81 and 82 are "RTK signal lost"; their help text matches.
-- **Mower profile versions labeled correctly:** MCU, wheel motor and blade motor firmware (the row used to read "MCU / board").
-- **Messages that give a count read correctly in every language** ("1 mower device", not a stray English "s").
-- **The sign-in region list is in your language.**
-- **Help and messages name the Home Assistant switch that exists today:** to run setup again, switch **Enable Home Assistant & automations** off and back on.
-- **A few labels whose translation said the wrong thing now say what they mean** — the update time, the battery log's charging rows, the edge-pass clippings setting.
-- **The "Skip near the dock" help gives the real range, 0–15 m.**
-- **The user wiki names every switch, button and section as the Toolkit shows it today**, in every language.
+- **An RTK or link pause that reached the mower should no longer show "A command could not be sent."** When the cloud is slow to confirm (for example with the official app open on the same account), the mower's own Paused state is taken as the answer, and the pause is resumed when the signal returns.
+- **The same alert repeated shows once, with a count** (×3), instead of filling the screen.
+- **Pause on RTK loss should no longer switch itself off and back on** as the mower heads home or docks.
+- **No "Precision guard held a pause" lines while the mower is charging** or otherwise not out mowing.
